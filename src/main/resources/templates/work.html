@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Our work')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<section class="phero"><div class="wrap"><p class="eyebrow">Our work</p><h1>Examples of what we build.</h1><p class="lead">These are representative project types. Replace them with your real case studies, clients and results as you grow.</p></div></section><section class="s "><div class="wrap"><h2>Representative projects</h2><p class="sub">Each one starts with a business problem, not a technology.</p><div class="grid g2"><div class="card"><span class="tag">Internal tools</span><h3>HR &amp; payroll portal</h3><p><b>Challenge:</b> Paper-based letters and payslips sent by email.</p><p style="margin-top:8px"><b>Approach:</b> Role-based portal with branded, printable documents.</p><p style="margin-top:8px"><b>Result:</b> One place for HR to issue and employees to find their records.</p></div><div class="card"><span class="tag">Customer apps</span><h3>Self-service web app</h3><p><b>Challenge:</b> Customers phoned support for routine requests.</p><p style="margin-top:8px"><b>Approach:</b> Secure login, request tracking and notifications.</p><p style="margin-top:8px"><b>Result:</b> Fewer support calls and faster responses.</p></div><div class="card"><span class="tag">Cloud</span><h3>Cloud migration</h3><p><b>Challenge:</b> Ageing servers that were costly and hard to scale.</p><p style="margin-top:8px"><b>Approach:</b> Containerised services with automated deployments.</p><p style="margin-top:8px"><b>Result:</b> Predictable releases and lower hosting effort.</p></div><div class="card"><span class="tag">Data</span><h3>Analytics dashboard</h3><p><b>Challenge:</b> Reports built by hand in spreadsheets.</p><p style="margin-top:8px"><b>Approach:</b> Automated pipelines feeding live dashboards.</p><p style="margin-top:8px"><b>Result:</b> Decisions made on current data, not last month's.</p></div></div></div></section>
+<section th:replace="~{fragments :: cta}"></section>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

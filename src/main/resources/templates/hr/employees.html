@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments :: head('HR Console')}"></head>
+
+<body>
+	<header th:replace="~{fragments :: nav}"></header>
+	<main>
+		<h1>HR Console &ndash; Employees</h1>
+		<div class="alert ok" th:if="${param.deleted}">Employee and portal login deleted.</div>
+		<div class="panel wide">
+			<h2>Add employee</h2>
+			<p class="muted">This also creates the employee's portal login (username = Employee ID).</p>
+			<form th:action="@{/hr/employees}" th:object="${employee}" method="post">
+				<div class="cols">
+					<div><label>Employee ID</label><input type="text" th:field="*{employeeCode}">
+						<div class="error" th:errors="*{employeeCode}"></div>
+					</div>
+					<div><label>Full name</label><input type="text" th:field="*{fullName}">
+						<div class="error" th:errors="*{fullName}"></div>
+					</div>
+					<div><label>Email</label><input type="email" th:field="*{email}">
+						<div class="error" th:errors="*{email}"></div>
+					</div>
+					<div><label>Designation</label><input type="text" th:field="*{designation}">
+						<div class="error" th:errors="*{designation}"></div>
+					</div>
+					<div><label>Department</label><input type="text" th:field="*{department}">
+						<div class="error" th:errors="*{department}"></div>
+					</div>
+					<div><label>Date of joining</label><input type="date" th:field="*{dateOfJoining}">
+						<div class="error" th:errors="*{dateOfJoining}"></div>
+					</div>
+					<div><label>Annual CTC (INR)</label><input type="number" step="0.01" th:field="*{annualCtc}">
+						<div class="error" th:errors="*{annualCtc}"></div>
+					</div>
+					<div><label>PAN</label><input type="text" th:field="*{panNumber}">
+						<div class="error" th:errors="*{panNumber}"></div>
+					</div>
+					<div><label>Bank account no.</label><input type="text" th:field="*{bankAccount}">
+						<div class="error" th:errors="*{bankAccount}"></div>
+					</div>
+					<div><label>Portal role</label>
+						<select name="role">
+							<option value="EMPLOYEE">Employee</option>
+							<option value="HR" sec:authorize="hasRole('ADMIN')">HR</option>
+						</select>
+						<div class="error" th:if="${roleError}" th:text="${roleError}"></div>
+					</div>
+					<div><label>Initial password</label><input type="password" name="password">
+						<div class="error" th:if="${passwordError}" th:text="${passwordError}"></div>
+					</div>
+				</div>
+				<p><button class="btn" type="submit">Create employee</button></p>
+			</form>
+		</div>
+		<!-- serarch page section start--> 
+		<div class="panel wide">
+    <h2>Search Employees</h2>
+
+    <form th:action="@{/hr/employees}" method="get">
+        <div class="cols">
+            <div>
+                <label for="employeeId">Employee ID</label>
+
+                <input
+                    type="text"
+                    id="employeeId"
+                    name="employeeId"
+                    th:value="${employeeId}"
+                    placeholder="Enter Employee ID, e.g. AKV001">
+            </div>
+        </div>
+
+        <p>
+            <button class="btn" type="submit">Search</button>
+
+            <a class="btn small"
+               th:href="@{/hr/employees}">
+                Clear
+            </a>
+        </p>
+    </form>
+</div>
+<!-- -----------------Search page section -----------end --> 
+		<table>
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Designation</th>
+				<th>Department</th>
+				<th>Role</th>
+				<th>Joined</th>
+				<th></th>
+			</tr>
+			<tr th:each="e : ${employees}">
+				<td th:text="${e.employeeCode}">AKV001</td>
+				<td th:text="${e.fullName}">Name</td>
+				<td th:text="${e.designation}">Designation</td>
+				<td th:text="${e.department}">Dept</td>
+				<td th:text="${e.user != null} ? ${e.user.role} : '-'">EMPLOYEE</td>
+				<td th:text="${#temporals.format(e.dateOfJoining,'dd MMM yyyy')}">date</td>
+				<td><a class="btn small" th:href="@{/hr/employees/{id}(id=${e.id})}">Open</a></td>
+			</tr>
+			<tr th:if="${#lists.isEmpty(employees)}">
+				<td colspan="7">No employees yet.</td>
+			</tr>
+			<div class="pagination" th:if="${totalPages > 0}">
+
+    <span>
+        Page
+        <span th:text="${currentPage + 1}">1</span>
+        of
+        <span th:text="${totalPages}">1</span>
+    </span>
+
+    <a class="btn small"
+       th:if="${employeesPage.hasPrevious()}"
+       th:href="@{/hr/employees(
+           employeeId=${employeeId},
+           page=${currentPage - 1}
+       )}">
+        Previous
+    </a>
+
+    <a class="btn small"
+       th:if="${employeesPage.hasNext()}"
+       th:href="@{/hr/employees(
+           employeeId=${employeeId},
+           page=${currentPage + 1}
+       )}">
+        Next
+    </a>
+
+</div>
+		</table>
+	</main>
+	<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+
+</html>

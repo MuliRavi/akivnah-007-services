@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Dashboard')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main>
+  <h1>Welcome, <span th:text="${username}">user</span></h1>
+  <p>Signed in with role:
+    <strong th:each="r : ${roles}" th:text="${#strings.replace(r.authority,'ROLE_','')}">USER</strong>
+  </p>
+  <p sec:authorize="hasRole('ADMIN')"><a class="btn" th:href="@{/admin/services}">Manage services</a></p>
+  <h2>Available services</h2>
+  <div class="grid">
+    <div class="card" th:each="s : ${services}">
+      <h3 th:text="${s.name}">Service</h3>
+      <p th:text="${s.description}">Description</p>
+      <span class="price" th:text="'From ₹' + ${#numbers.formatDecimal(s.price,1,'COMMA',2,'POINT')}">₹0</span>
+    </div>
+  </div>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

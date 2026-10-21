@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Service Catalog')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main>
+  <h1>Service Catalog</h1>
+  <p class="muted">Packages managed by our team. <a th:href="@{/services}">See all services &rarr;</a></p>
+  <p th:if="${#lists.isEmpty(services)}">No services are available right now.</p>
+  <div class="grid">
+    <div class="card" th:each="s : ${services}">
+      <h3 th:text="${s.name}">Service</h3>
+      <p th:text="${s.description}">Description</p>
+      <span class="price" th:text="'From ₹' + ${#numbers.formatDecimal(s.price,1,'COMMA',2,'POINT')}">₹0</span>
+    </div>
+  </div>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

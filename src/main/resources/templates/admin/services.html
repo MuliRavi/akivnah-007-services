@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Manage Services')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main>
+  <h1>Manage Services</h1>
+  <div class="alert ok" th:if="${message}" th:text="${message}"></div>
+
+  <div class="panel wide">
+    <h2 th:text="${service.id == null} ? 'Add service' : 'Edit service'">Add service</h2>
+    <form th:action="@{/admin/services}" th:object="${service}" method="post">
+      <input type="hidden" th:field="*{id}">
+      <label for="name">Name</label>
+      <input type="text" id="name" th:field="*{name}">
+      <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+      <label for="description">Description</label>
+      <textarea id="description" rows="3" th:field="*{description}"></textarea>
+      <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+      <label for="price">Starting price (INR)</label>
+      <input type="number" step="0.01" id="price" th:field="*{price}">
+      <div class="error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+      <label><input type="checkbox" th:field="*{active}"> Active (visible to customers)</label>
+      <p>
+        <button class="btn" type="submit">Save</button>
+        <a th:if="${service.id != null}" th:href="@{/admin/services}">Cancel</a>
+      </p>
+    </form>
+  </div>
+
+  <table>
+    <tr><th>Name</th><th>Price (INR)</th><th>Status</th><th>Actions</th></tr>
+    <tr th:each="i : ${items}">
+      <td th:text="${i.name}">Name</td>
+      <td th:text="${#numbers.formatDecimal(i.price,1,'COMMA',2,'POINT')}">0</td>
+      <td th:text="${i.active} ? 'Active' : 'Hidden'">Active</td>
+      <td class="actions">
+        <a class="btn small" th:href="@{/admin/services/{id}/edit(id=${i.id})}">Edit</a>
+        <form th:action="@{/admin/services/{id}/delete(id=${i.id})}" method="post"
+              onsubmit="return confirm('Delete this service?')">
+          <button class="btn small danger" type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+  </table>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

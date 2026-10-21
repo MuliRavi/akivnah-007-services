@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{documents/layout :: head('Payslip')}"></head>
+<body>
+<div th:replace="~{documents/layout :: toolbar}"></div>
+<div class="page"><table class="sheet">
+<thead><tr><td class="pad"><div th:replace="~{documents/layout :: header}"></div></td></tr></thead>
+<tbody><tr><td class="pad body">
+  <h1 class="title">PAYSLIP &ndash; <span th:text="${p.periodLabel}">September 2026</span></h1>
+  <table class="d">
+    <tr><td class="l">Employee name</td><td th:text="${p.employee.fullName}">Name</td><td class="l">Employee ID</td><td th:text="${p.employee.employeeCode}">ID</td></tr>
+    <tr><td class="l">Designation</td><td th:text="${p.employee.designation}">Designation</td><td class="l">Department</td><td th:text="${p.employee.department}">Dept</td></tr>
+    <tr><td class="l">Date of joining</td><td th:text="${#temporals.format(p.employee.dateOfJoining,'dd MMM yyyy')}">date</td><td class="l">PAN</td><td th:text="${p.employee.panNumber ?: '-'}">PAN</td></tr>
+    <tr><td class="l">Bank A/c</td><td th:text="${p.employee.bankAccount ?: '-'}">Account</td><td class="l">Days paid / working</td><td><span th:text="${p.daysPaid}">30</span> / <span th:text="${p.workingDays}">30</span></td></tr>
+  </table>
+  <table class="d">
+    <tr><th>Earnings</th><th class="n">Amount (INR)</th><th>Deductions</th><th class="n">Amount (INR)</th></tr>
+    <tr><td>Basic salary</td><td class="n" th:text="${#numbers.formatDecimal(p.basic,1,'COMMA',2,'POINT')}">0</td><td>Provident fund</td><td class="n" th:text="${#numbers.formatDecimal(p.providentFund,1,'COMMA',2,'POINT')}">0</td></tr>
+    <tr><td>HRA</td><td class="n" th:text="${#numbers.formatDecimal(p.hra,1,'COMMA',2,'POINT')}">0</td><td>Professional tax</td><td class="n" th:text="${#numbers.formatDecimal(p.professionalTax,1,'COMMA',2,'POINT')}">0</td></tr>
+    <tr><td>Special allowance</td><td class="n" th:text="${#numbers.formatDecimal(p.specialAllowance,1,'COMMA',2,'POINT')}">0</td><td>Income tax (TDS)</td><td class="n" th:text="${#numbers.formatDecimal(p.incomeTax,1,'COMMA',2,'POINT')}">0</td></tr>
+    <tr class="t"><td>Gross earnings</td><td class="n" th:text="${#numbers.formatDecimal(p.grossEarnings,1,'COMMA',2,'POINT')}">0</td><td>Total deductions</td><td class="n" th:text="${#numbers.formatDecimal(p.totalDeductions,1,'COMMA',2,'POINT')}">0</td></tr>
+  </table>
+  <p class="net">Net pay: INR <span th:text="${#numbers.formatDecimal(p.netPay,1,'COMMA',2,'POINT')}">0</span></p>
+  <p style="font-size:9pt;color:#5A6472">This is a system-generated payslip and does not require a signature.</p>
+</td></tr></tbody>
+<tfoot><tr><td class="pad"><div th:replace="~{documents/layout :: footer}"></div></td></tr></tfoot>
+</table></div>
+</body>
+</html>

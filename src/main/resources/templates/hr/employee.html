@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Employee')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main>
+  <p><a th:href="@{/hr/employees}">&larr; All employees</a></p>
+  <h1 th:text="${employee.fullName} + ' (' + ${employee.employeeCode} + ')'">Name</h1>
+  <div class="alert ok" th:if="${param.created}">Employee saved to the database. Portal login: username <b th:text="${employee.employeeCode}">ID</b> with the initial password you set.</div>
+  <div class="alert ok" th:if="${param.updated}">Employee details updated.</div>
+  <div class="alert bad" th:if="${param.nodelete}">This login cannot be deleted here (it is your own account, an admin, or an HR user and you are not an administrator).</div>
+  <div class="alert ok" th:if="${tempPassword}">Temporary password for <b th:text="${employee.employeeCode}">ID</b>: <code th:text="${tempPassword}">xxxx</code> &ndash; shown only once. Give it to the employee privately and they are signed out everywhere and must choose their own password at the next sign-in.</div>
+  <div class="alert bad" th:if="${param.noreset}">The password for this login cannot be reset here (your own account, an admin, or an HR user and you are not an administrator).</div>
+  <div class="panel wide">
+    <p><strong th:text="${employee.designation}">Designation</strong> &middot; <span th:text="${employee.department}">Dept</span></p>
+    <p>Joined <span th:text="${#temporals.format(employee.dateOfJoining,'dd MMMM yyyy')}">date</span> &middot;
+       CTC INR <span th:text="${#numbers.formatDecimal(employee.annualCtc,1,'COMMA',2,'POINT')}">0</span> a year &middot;
+       <span th:text="${employee.email}">email</span></p>
+    <div class="btn-row">
+      <a class="btn" th:href="@{/hr/employees/{id}/offers/new(id=${employee.id})}">New offer letter</a>
+      <a class="btn" th:href="@{/hr/employees/{id}/payslips/new(id=${employee.id})}">New payslip</a>
+      <a class="btn" th:href="@{/hr/employees/{id}/increments/new(id=${employee.id})}">New increment letter</a>
+      <a class="btn line" th:href="@{/hr/employees/{id}/edit(id=${employee.id})}">Edit details</a>
+      <form th:action="@{/hr/employees/{id}/reset-password(id=${employee.id})}" method="post" style="display:inline"
+            onsubmit="return confirm('Create a new temporary password for this employee? Their current password stops working.')">
+        <button class="btn line" type="submit">Reset password</button>
+      </form>
+      <form th:action="@{/hr/employees/{id}/delete(id=${employee.id})}" method="post" style="display:inline"
+            onsubmit="return confirm('Delete this employee, all their letters and payslips, their portal login and mailbox? This cannot be undone.')">
+        <button class="btn danger" type="submit">Delete employee</button>
+      </form>
+    </div>
+  </div>
+
+  <h2>Offer letters</h2>
+  <table>
+    <tr><th>Reference</th><th>Issued</th><th>Designation</th><th></th></tr>
+    <tr th:each="o : ${offers}"><td th:text="${o.refNo}">ref</td><td th:text="${#temporals.format(o.issueDate,'dd MMM yyyy')}">d</td><td th:text="${o.designation}">x</td>
+      <td><a class="btn small" th:href="@{/documents/offer/{id}(id=${o.id})}">View / Print</a></td></tr>
+    <tr th:if="${#lists.isEmpty(offers)}"><td colspan="4">None yet.</td></tr>
+  </table>
+
+  <h2>Payslips</h2>
+  <table>
+    <tr><th>Period</th><th>Gross</th><th>Net pay</th><th></th></tr>
+    <tr th:each="p : ${payslips}"><td th:text="${p.periodLabel}">Sep 2026</td>
+      <td th:text="${#numbers.formatDecimal(p.grossEarnings,1,'COMMA',2,'POINT')}">0</td>
+      <td th:text="${#numbers.formatDecimal(p.netPay,1,'COMMA',2,'POINT')}">0</td>
+      <td><a class="btn small" th:href="@{/documents/payslip/{id}(id=${p.id})}">View / Print</a></td></tr>
+    <tr th:if="${#lists.isEmpty(payslips)}"><td colspan="4">None yet.</td></tr>
+  </table>
+
+  <h2>Increment letters</h2>
+  <table>
+    <tr><th>Reference</th><th>Effective</th><th>New CTC</th><th></th></tr>
+    <tr th:each="i : ${increments}"><td th:text="${i.refNo}">ref</td><td th:text="${#temporals.format(i.effectiveDate,'dd MMM yyyy')}">d</td>
+      <td th:text="${#numbers.formatDecimal(i.newCtc,1,'COMMA',2,'POINT')}">0</td>
+      <td><a class="btn small" th:href="@{/documents/increment/{id}(id=${i.id})}">View / Print</a></td></tr>
+    <tr th:if="${#lists.isEmpty(increments)}"><td colspan="4">None yet.</td></tr>
+  </table>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

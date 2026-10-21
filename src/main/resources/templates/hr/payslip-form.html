@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('New payslip')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main>
+  <p><a th:href="@{/hr/employees/{id}(id=${employee.id})}">&larr; Back</a></p>
+  <h1>Payslip &ndash; <span th:text="${employee.fullName}">Name</span></h1>
+  <div class="panel wide">
+    <form th:action="@{/hr/employees/{id}/payslips(id=${employee.id})}" th:object="${payslip}" method="post">
+      <div class="cols">
+        <div><label>Month</label>
+          <select th:field="*{payMonth}"><option th:each="m, st : ${months}" th:value="${st.count}" th:text="${m}">Month</option></select>
+          <div class="error" th:errors="*{payMonth}"></div></div>
+        <div><label>Year</label><input type="number" th:field="*{payYear}"><div class="error" th:errors="*{payYear}"></div></div>
+        <div><label>Working days</label><input type="number" th:field="*{workingDays}"><div class="error" th:errors="*{workingDays}"></div></div>
+        <div><label>Days paid</label><input type="number" th:field="*{daysPaid}"><div class="error" th:errors="*{daysPaid}"></div></div>
+      </div>
+      <h3>Earnings (INR)</h3>
+      <div class="cols">
+        <div><label>Basic salary</label><input type="number" step="0.01" th:field="*{basic}"><div class="error" th:errors="*{basic}"></div></div>
+        <div><label>HRA</label><input type="number" step="0.01" th:field="*{hra}"><div class="error" th:errors="*{hra}"></div></div>
+        <div><label>Special allowance</label><input type="number" step="0.01" th:field="*{specialAllowance}"><div class="error" th:errors="*{specialAllowance}"></div></div>
+      </div>
+      <h3>Deductions (INR)</h3>
+      <div class="cols">
+        <div><label>Provident fund</label><input type="number" step="0.01" th:field="*{providentFund}"><div class="error" th:errors="*{providentFund}"></div></div>
+        <div><label>Professional tax</label><input type="number" step="0.01" th:field="*{professionalTax}"><div class="error" th:errors="*{professionalTax}"></div></div>
+        <div><label>Income tax (TDS)</label><input type="number" step="0.01" th:field="*{incomeTax}"><div class="error" th:errors="*{incomeTax}"></div></div>
+      </div>
+      <p><button class="btn" type="submit">Generate payslip</button></p>
+    </form>
+  </div>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${title} + ' | Akivnah'">Akivnah</title>
+  <meta name="description" content="Akivnah builds custom software, web and mobile apps, cloud and data solutions.">
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/favicon.svg}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <script>
+    // Back/forward button: never show a stale private page, re-ask the server instead
+    window.addEventListener('pageshow', function (e) {
+      var nav = performance.getEntriesByType('navigation')[0];
+      if (e.persisted || (nav && nav.type === 'back_forward')) { location.reload(); }
+    });
+  </script>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="top" id="top" th:fragment="nav">
+  <div class="wrap bar">
+    <a class="brand" th:href="@{/}" aria-label="Akivnah home"><img th:src="@{/images/logo-dark.svg}" alt="Akivnah"></a>
+    <button class="burger" type="button" aria-label="Menu" onclick="document.body.classList.toggle('open')">&#9776;</button>
+    <nav>
+      <a th:href="@{/about}">About</a>
+      <a th:href="@{/services}">Services</a>
+      <a th:href="@{/work}">Work</a>
+      <a th:href="@{/careers}">Careers</a>
+      <a th:href="@{/insights}">Insights</a>
+      <a th:href="@{/contact}">Contact</a>
+      <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
+      <details class="acct" sec:authorize="isAuthenticated()">
+        <summary>Account</summary>
+        <div class="menu">
+          <a th:href="@{/dashboard}">Dashboard</a>
+          <a th:href="@{/account/password}">Change password</a>
+          <a sec:authorize="hasAnyRole('EMPLOYEE','HR','ADMIN')" th:href="@{/portal}">Employee Portal</a>
+          <a sec:authorize="hasAnyRole('EMPLOYEE','HR','ADMIN')" th:href="@{/mail}">Mail</a>
+          <a sec:authorize="hasAnyRole('HR','ADMIN')" th:href="@{/hr/employees}">HR Console</a>
+          <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/services}">Manage Services</a>
+          <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/messages}">Messages</a>
+          <form th:action="@{/logout}" method="post"><button type="submit">Logout (<span sec:authentication="name">user</span>)</button></form>
+        </div>
+      </details>
+    </nav>
+    <a class="btn" th:href="@{/contact}">Start a project</a>
+  </div>
+</header>
+
+<!-- ========== CALL TO ACTION ========== -->
+<section class="s" th:fragment="cta"><div class="wrap"><div class="cta">
+  <div><h2>Have an idea or a system to fix?</h2><p>Tell us what you need. We reply within one working day with a clear next step.</p></div>
+  <a class="btn" th:href="@{/contact}">Talk to us</a></div></div></section>
+
+<!-- ========== FOOTER ========== -->
+<footer th:fragment="footer"><div class="wrap">
+  <div class="cols">
+    <div><img th:src="@{/images/logo-dark.svg}" alt="Akivnah"><p>Software that moves your business forward. Web, mobile, cloud and data solutions built to last.</p></div>
+    <div><h4>Company</h4><a th:href="@{/about}">About</a><a th:href="@{/work}">Work</a><a th:href="@{/careers}">Careers</a><a th:href="@{/insights}">Insights</a><a th:href="@{/contact}">Contact</a></div>
+    <div><h4>Services</h4><a th:href="@{/services}">All services</a><a th:href="@{/catalog}">Service catalog</a><a th:href="@{/login}">Employee login</a></div>
+    <div><h4>Contact</h4><a href="mailto:hello@akivnah.com">hello@akivnah.com</a><span>+91 00000 00000</span><br><span>[Street Address, City - PIN]</span></div>
+  </div>
+  <div class="legal">&copy; <span th:text="${#temporals.year(#temporals.createNow())}">2026</span> Akivnah &middot; [Full Registered Company Name] &middot; CIN: [Company Identification Number]</div>
+</div></footer>
+</body>
+</html>

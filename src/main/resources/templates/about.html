@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('About')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<section class="phero"><div class="wrap"><p class="eyebrow">About Akivnah</p><h1>A software team that treats your product like its own.</h1><p class="lead">We started Akivnah to give growing companies the engineering quality of a large firm with the attention of a small one.</p></div></section><section class="s alt"><div class="wrap"><h2>Our story</h2><p class="sub">Why we exist and how we think.</p><div class="split"><div><p>Too many software projects stall because requirements drift, communication breaks down or nobody owns the outcome. Akivnah was built to fix that: small senior teams, honest estimates and software that keeps working long after launch.</p><p>We work with startups, schools, service firms and enterprises across industries. Whatever the size of the project, the standard stays the same.</p></div><div><p>Today we build web and mobile platforms, move systems to the cloud, add data and AI features, and run the products we ship. We also build our own tools, including an HR and payroll portal we use ourselves.</p><p>[Add your founding year, location and a line about the founders here.]</p></div></div></div></section><section class="s "><div class="wrap"><h2>What we value</h2><p class="sub">Four principles guide every decision.</p><div class="grid"><div class="card"><div class="num">1</div><h3>Craft</h3><p>Clean, tested, maintainable code. No shortcuts that become your problem later.</p></div><div class="card"><div class="num">2</div><h3>Clarity</h3><p>Plain-language updates, honest timelines and no surprises on the invoice.</p></div><div class="card"><div class="num">3</div><h3>Ownership</h3><p>We stay accountable for outcomes, not just tasks.</p></div><div class="card"><div class="num">4</div><h3>Security</h3><p>Access control, encrypted credentials and careful data handling by default.</p></div></div></div></section>
+<section th:replace="~{fragments :: cta}"></section>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

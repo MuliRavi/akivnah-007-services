@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Insights')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<section class="phero"><div class="wrap"><p class="eyebrow">Insights</p><h1>Notes from the engineering desk.</h1><p class="lead">Short, practical reads on building and running software. Sample articles below; connect a blog or CMS when you are ready to publish.</p></div></section><section class="s "><div class="wrap"><h2>Latest articles</h2><p class="sub">Practical advice from our team.</p><div class="grid"><div class="card"><span class="tag">Security</span><h3>Why logout should also revoke your JWT</h3><p>Stateless tokens stay valid until they expire. Here is how to cancel them at logout and stop stale pages reappearing.</p></div><div class="card"><span class="tag">Architecture</span><h3>Monolith first, microservices later</h3><p>Most products do not need microservices on day one. How to start simple and split when it pays off.</p></div><div class="card"><span class="tag">Cloud</span><h3>Five cloud cost mistakes we see most</h3><p>Oversized instances, idle resources and missing budgets: quick checks that save real money.</p></div></div></div></section>
+<section th:replace="~{fragments :: cta}"></section>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

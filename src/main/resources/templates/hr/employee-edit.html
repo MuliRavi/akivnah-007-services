@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Edit employee')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main>
+  <p><a th:href="@{/hr/employees/{id}(id=${employeeId})}">&larr; Back</a></p>
+  <h1>Edit employee</h1>
+  <div class="panel wide">
+    <p class="muted">The Employee ID is also the portal username, so it cannot be changed. Changing the email also updates the portal login.</p>
+    <form th:action="@{/hr/employees/{id}/edit(id=${employeeId})}" th:object="${employee}" method="post">
+      <div class="cols">
+        <div><label>Employee ID</label><input type="text" th:field="*{employeeCode}" readonly><div class="error" th:errors="*{employeeCode}"></div></div>
+        <div><label>Full name</label><input type="text" th:field="*{fullName}"><div class="error" th:errors="*{fullName}"></div></div>
+        <div><label>Email</label><input type="email" th:field="*{email}"><div class="error" th:errors="*{email}"></div></div>
+        <div><label>Designation</label><input type="text" th:field="*{designation}"><div class="error" th:errors="*{designation}"></div></div>
+        <div><label>Department</label><input type="text" th:field="*{department}"><div class="error" th:errors="*{department}"></div></div>
+        <div><label>Date of joining</label><input type="date" th:field="*{dateOfJoining}"><div class="error" th:errors="*{dateOfJoining}"></div></div>
+        <div><label>Annual CTC (INR)</label><input type="number" step="0.01" th:field="*{annualCtc}"><div class="error" th:errors="*{annualCtc}"></div></div>
+        <div><label>PAN</label><input type="text" th:field="*{panNumber}"><div class="error" th:errors="*{panNumber}"></div></div>
+        <div><label>Bank account no.</label><input type="text" th:field="*{bankAccount}"><div class="error" th:errors="*{bankAccount}"></div></div>
+      </div>
+      <p><button class="btn" type="submit">Save changes</button></p>
+    </form>
+  </div>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

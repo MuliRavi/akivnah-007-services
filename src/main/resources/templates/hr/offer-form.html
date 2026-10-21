@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('New offer letter')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main>
+  <p><a th:href="@{/hr/employees/{id}(id=${employee.id})}">&larr; Back</a></p>
+  <h1>Offer letter &ndash; <span th:text="${employee.fullName}">Name</span></h1>
+  <div class="panel wide">
+    <form th:action="@{/hr/employees/{id}/offers(id=${employee.id})}" th:object="${offer}" method="post">
+      <div class="cols">
+        <div><label>Issue date</label><input type="date" th:field="*{issueDate}"><div class="error" th:errors="*{issueDate}"></div></div>
+        <div><label>Joining date</label><input type="date" th:field="*{joiningDate}"><div class="error" th:errors="*{joiningDate}"></div></div>
+        <div><label>Designation</label><input type="text" th:field="*{designation}"><div class="error" th:errors="*{designation}"></div></div>
+        <div><label>Annual CTC (INR)</label><input type="number" step="0.01" th:field="*{annualCtc}"><div class="error" th:errors="*{annualCtc}"></div></div>
+        <div><label>Probation (months)</label><input type="number" th:field="*{probationMonths}"><div class="error" th:errors="*{probationMonths}"></div></div>
+        <div><label>Notice period (days)</label><input type="number" th:field="*{noticeDays}"><div class="error" th:errors="*{noticeDays}"></div></div>
+        <div><label>Signatory name</label><input type="text" th:field="*{signatoryName}"><div class="error" th:errors="*{signatoryName}"></div></div>
+        <div><label>Signatory title</label><input type="text" th:field="*{signatoryTitle}"><div class="error" th:errors="*{signatoryTitle}"></div></div>
+      </div>
+      <p><button class="btn" type="submit">Generate offer letter</button></p>
+    </form>
+  </div>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

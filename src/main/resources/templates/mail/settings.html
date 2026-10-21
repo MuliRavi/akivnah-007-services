@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Mail settings')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="mailwrap">
+  <aside th:replace="~{mail/side :: side}"></aside>
+  <section class="mmain">
+    <h1>Settings &amp; signature</h1>
+    <div class="mcard">
+      <form th:action="@{/mail/settings}" method="post">
+        <label for="signature">Signature</label>
+        <textarea id="signature" name="signature" rows="6" maxlength="500" th:text="${signature}" placeholder="Name&#10;Designation, Akivnah&#10;+91 00000 00000"></textarea>
+        <p class="small muted">Added at the end of new messages, replies and forwards (up to 500 characters, plain text).</p>
+        <p><button class="btn" type="submit">Save</button></p>
+      </form>
+    </div>
+  </section>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

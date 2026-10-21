@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{documents/layout :: head('Increment Letter')}"></head>
+<body>
+<div th:replace="~{documents/layout :: toolbar}"></div>
+<div class="page"><table class="sheet">
+<thead><tr><td class="pad"><div th:replace="~{documents/layout :: header}"></div></td></tr></thead>
+<tbody><tr><td class="pad body">
+  <p class="right">Date: <span th:text="${#temporals.format(i.issueDate,'dd MMMM yyyy')}">date</span></p>
+  <p>Ref No: <span th:text="${i.refNo}">ref</span></p>
+  <h1 class="title">REVISION OF COMPENSATION</h1>
+  <p>Private &amp; Confidential</p>
+  <p>Dear <strong th:text="${i.employee.fullName}">Name</strong>,</p>
+  <p>We are pleased to inform you that, in recognition of your performance and contribution to Akivnah, your compensation has been revised with effect from
+     <strong th:text="${#temporals.format(i.effectiveDate,'dd MMMM yyyy')}">date</strong>.</p>
+  <table class="d">
+    <tr><th>Particulars</th><th class="n">Annual CTC (INR)</th></tr>
+    <tr><td>Current CTC</td><td class="n" th:text="${#numbers.formatDecimal(i.oldCtc,1,'COMMA',2,'POINT')}">0</td></tr>
+    <tr><td>Revised CTC</td><td class="n" th:text="${#numbers.formatDecimal(i.newCtc,1,'COMMA',2,'POINT')}">0</td></tr>
+    <tr class="t"><td>Increment (<span th:text="${i.incrementPercent}">0</span>%)</td><td class="n" th:text="${#numbers.formatDecimal(i.incrementAmount,1,'COMMA',2,'POINT')}">0</td></tr>
+  </table>
+  <p th:if="${i.newDesignation != null and !#strings.isEmpty(i.newDesignation)}">Your designation will be <strong th:text="${i.newDesignation}">Designation</strong> from the same date.</p>
+  <p th:if="${i.remarks != null and !#strings.isEmpty(i.remarks)}" th:text="${i.remarks}">Remarks</p>
+  <p>All other terms and conditions of your employment remain unchanged. Please treat this letter as confidential. We congratulate you and look forward to your continued contribution.</p>
+  <div class="sign"><p>Yours sincerely,</p>
+    <div class="line"><strong th:text="${i.signatoryName}">Signatory</strong><br><span th:text="${i.signatoryTitle}">Title</span>, Akivnah</div></div>
+</td></tr></tbody>
+<tfoot><tr><td class="pad"><div th:replace="~{documents/layout :: footer}"></div></td></tr></tfoot>
+</table></div>
+</body>
+</html>

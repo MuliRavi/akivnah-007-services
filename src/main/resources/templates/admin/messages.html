@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Messages')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main>
+  <h1>Contact messages</h1>
+  <p class="muted">Enquiries submitted through the website contact form, newest first.</p>
+  <table>
+    <tr><th>Received</th><th>Name</th><th>Email</th><th>Interest</th><th>Message</th></tr>
+    <tr th:each="m : ${messages}">
+      <td th:text="${#temporals.format(m.createdAt,'dd MMM yyyy HH:mm')}">date</td>
+      <td th:text="${m.name}">Name</td>
+      <td><a th:href="'mailto:' + ${m.email}" th:text="${m.email}">email</a></td>
+      <td th:text="${m.service}">Service</td>
+      <td th:text="${m.message}">Message</td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(messages)}"><td colspan="5">No messages yet.</td></tr>
+  </table>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Mail')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="mailwrap">
+  <aside th:replace="~{mail/side :: side}"></aside>
+  <section class="mmain">
+    <div class="mtop">
+      <h1 th:text="${title}">Inbox</h1>
+      <form th:if="${active != 'starred'}" class="msearch" th:action="@{/mail/folder/{f}(f=${active})}" method="get">
+        <input type="text" name="q" th:value="${q}" placeholder="Search this folder">
+        <button class="btn small" type="submit">Search</button>
+      </form>
+      <form th:if="${active == 'trash' and !#lists.isEmpty(messages)}" th:action="@{/mail/trash/empty}" method="post" onsubmit="return confirm('Delete everything in Trash for good?')">
+        <button class="btn small danger" type="submit">Empty trash</button>
+      </form>
+    </div>
+    <div class="alert ok" th:if="${message}" th:text="${message}"></div>
+
+    <div class="mlist">
+      <div class="mrow" th:each="m : ${messages}" th:classappend="${!m.readFlag and active == 'inbox'} ? 'unread'">
+        <form th:action="@{/mail/message/{id}/star(id=${m.id})}" method="post" class="mstar">
+          <input type="hidden" name="back" th:value="'/mail/folder/' + ${active}">
+          <button type="submit" th:title="${m.starred} ? 'Unstar' : 'Star'" th:text="${m.starred} ? '&#9733;' : '&#9734;'" th:classappend="${m.starred} ? 'on'">&#9734;</button>
+        </form>
+        <a class="mlink" th:href="${m.folder.name() == 'DRAFTS'} ? @{/mail/compose/draft/{id}(id=${m.id})} : @{/mail/message/{id}(id=${m.id})}">
+          <span class="who" th:text="${showTo} ? (${#strings.isEmpty(m.toAddresses)} ? '(no recipient)' : 'To: ' + ${m.toAddresses}) : ${m.fromAddress}">who</span>
+          <span class="subj"><span th:if="${withFiles.contains(m.id)}" title="Has attachments">&#128206; </span><b th:text="${m.subject}">Subject</b> <span class="snip" th:text="'&ndash; ' + ${m.snippet}">snippet</span></span>
+          <span class="when" th:text="${#temporals.format(m.createdAt,'dd MMM HH:mm')}">date</span>
+        </a>
+        <span class="state" th:if="${m.sendStatus != null}">
+          <span class="pill grey" th:if="${m.sendStatus.name() == 'QUEUED'}" th:title="${m.errorMessage}" th:text="${m.attempts > 0} ? 'Retrying' : 'Sending'">Sending</span>
+          <span class="pill red" th:if="${m.sendStatus.name() == 'FAILED'}" th:title="${m.errorMessage}">Failed</span>
+        </span>
+        <div class="macts">
+          <form th:if="${m.sendStatus != null and m.sendStatus.name() == 'FAILED'}" th:action="@{/mail/message/{id}/retry(id=${m.id})}" method="post">
+            <button class="btn small" type="submit">Retry</button>
+          </form>
+          <form th:if="${m.folder.name() == 'TRASH'}" th:action="@{/mail/message/{id}/restore(id=${m.id})}" method="post">
+            <button class="btn small" type="submit">Restore</button>
+          </form>
+          <form th:action="@{/mail/message/{id}/delete(id=${m.id})}" method="post">
+            <button class="btn small danger" type="submit" th:text="${m.folder.name() == 'TRASH'} ? 'Delete forever' : 'Delete'">Delete</button>
+          </form>
+        </div>
+      </div>
+      <p class="mempty" th:if="${#lists.isEmpty(messages)}">Nothing here.</p>
+    </div>
+  </section>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

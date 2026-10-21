@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Mail')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="mailwrap">
+  <aside th:replace="~{mail/side :: side}"></aside>
+  <section class="mmain">
+    <p><a th:href="@{/mail/folder/{f}(f=${active})}">&larr; Back</a></p>
+    <div class="alert bad" th:if="${m.sendStatus != null and m.sendStatus.name() == 'FAILED'}">
+      Could not be sent: <span th:text="${m.errorMessage}">error</span>
+      <form style="display:inline" th:action="@{/mail/message/{id}/retry(id=${m.id})}" method="post"><button class="btn small" type="submit">Retry</button></form>
+    </div>
+    <div class="alert ok" th:if="${m.sendStatus != null and m.sendStatus.name() == 'QUEUED'}">Waiting in the Outbox to be sent to <span th:text="${m.externalTo}">address</span>.</div>
+    <div class="mcard">
+      <h2 th:text="${m.subject}">Subject</h2>
+      <p class="mmeta">
+        <b>From:</b> <span th:text="${m.fromAddress}">from</span><br>
+        <b>To:</b> <span th:text="${m.toAddresses}">to</span><br>
+        <span th:if="${!#strings.isEmpty(m.ccAddresses)}"><b>Cc:</b> <span th:text="${m.ccAddresses}">cc</span><br></span>
+        <b>Date:</b> <span th:text="${#temporals.format(m.createdAt,'dd MMM yyyy, HH:mm')}">date</span>
+      </p>
+      <div class="mbody" th:text="${m.body}">Body</div>
+      <div class="matts" th:if="${!#lists.isEmpty(files)}">
+        <b>Attachments</b>
+        <a th:each="f : ${files}" class="mfile" th:href="@{/mail/attachment/{id}(id=${f.id})}">&#128206; <span th:text="${f.filename}">file.pdf</span> <small th:text="'(' + ${f.sizeLabel} + ')'">(1 KB)</small></a>
+      </div>
+    </div>
+    <div class="btn-row mbar">
+      <a class="btn" th:if="${m.folder.name() != 'TRASH'}" th:href="@{/mail/reply/{id}(id=${m.id})}">Reply</a>
+      <a class="btn" th:if="${m.folder.name() != 'TRASH'}" th:href="@{/mail/reply/{id}(id=${m.id},all=true)}">Reply all</a>
+      <a class="btn" th:href="@{/mail/forward/{id}(id=${m.id})}">Forward</a>
+      <form th:action="@{/mail/message/{id}/star(id=${m.id})}" method="post">
+        <input type="hidden" name="back" th:value="'/mail/message/' + ${m.id}">
+        <button class="btn" type="submit" th:text="${m.starred} ? 'Unstar' : 'Star'">Star</button>
+      </form>
+      <form th:if="${m.folder.name() == 'INBOX'}" th:action="@{/mail/message/{id}/unread(id=${m.id})}" method="post">
+        <button class="btn" type="submit">Mark unread</button>
+      </form>
+      <form th:if="${m.folder.name() == 'TRASH'}" th:action="@{/mail/message/{id}/restore(id=${m.id})}" method="post">
+        <button class="btn" type="submit">Restore</button>
+      </form>
+      <form th:action="@{/mail/message/{id}/delete(id=${m.id})}" method="post">
+        <button class="btn danger" type="submit" th:text="${m.folder.name() == 'TRASH'} ? 'Delete forever' : 'Delete'">Delete</button>
+      </form>
+    </div>
+  </section>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

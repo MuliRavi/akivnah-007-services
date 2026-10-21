@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Employee Portal')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main>
+  <h1>Employee Portal</h1>
+  <div class="alert bad" th:if="${employee == null}">No employee profile is linked to your login. Please contact HR.</div>
+  <div th:if="${employee != null}">
+    <div class="panel wide">
+      <h2 th:text="${employee.fullName}">Name</h2>
+      <p><strong th:text="${employee.designation}">Designation</strong> &middot; <span th:text="${employee.department}">Dept</span><br>
+         Employee ID: <span th:text="${employee.employeeCode}">AKV001</span> &middot;
+         Joined <span th:text="${#temporals.format(employee.dateOfJoining,'dd MMMM yyyy')}">date</span></p>
+    </div>
+
+    <h2>Payslips</h2>
+    <table>
+      <tr><th>Period</th><th>Net pay (INR)</th><th></th></tr>
+      <tr th:each="p : ${payslips}"><td th:text="${p.periodLabel}">Sep 2026</td>
+        <td th:text="${#numbers.formatDecimal(p.netPay,1,'COMMA',2,'POINT')}">0</td>
+        <td><a class="btn small" th:href="@{/documents/payslip/{id}(id=${p.id})}">View / Print</a></td></tr>
+      <tr th:if="${#lists.isEmpty(payslips)}"><td colspan="3">No payslips yet.</td></tr>
+    </table>
+
+    <h2>Offer letters</h2>
+    <table>
+      <tr><th>Reference</th><th>Issued</th><th></th></tr>
+      <tr th:each="o : ${offers}"><td th:text="${o.refNo}">ref</td><td th:text="${#temporals.format(o.issueDate,'dd MMM yyyy')}">d</td>
+        <td><a class="btn small" th:href="@{/documents/offer/{id}(id=${o.id})}">View / Print</a></td></tr>
+      <tr th:if="${#lists.isEmpty(offers)}"><td colspan="3">No offer letters yet.</td></tr>
+    </table>
+
+    <h2>Increment letters</h2>
+    <table>
+      <tr><th>Reference</th><th>Effective</th><th></th></tr>
+      <tr th:each="i : ${increments}"><td th:text="${i.refNo}">ref</td><td th:text="${#temporals.format(i.effectiveDate,'dd MMM yyyy')}">d</td>
+        <td><a class="btn small" th:href="@{/documents/increment/{id}(id=${i.id})}">View / Print</a></td></tr>
+      <tr th:if="${#lists.isEmpty(increments)}"><td colspan="3">No increment letters yet.</td></tr>
+    </table>
+  </div>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

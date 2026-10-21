@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Compose mail')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="mailwrap">
+  <aside th:replace="~{mail/side :: side}"></aside>
+  <section class="mmain">
+    <h1>Compose</h1>
+    <div class="alert bad" th:if="${error}" th:text="${error}"></div>
+    <div class="mcard">
+      <form th:action="@{/mail/send}" th:object="${form}" method="post" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{draftId}">
+        <label for="to">To</label>
+        <input type="text" id="to" th:field="*{to}" placeholder="Employee ID, colleague email or outside email, separated by commas" autofocus>
+        <label for="cc">Cc</label>
+        <input type="text" id="cc" th:field="*{cc}">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" th:field="*{subject}" maxlength="200">
+        <label for="body">Message</label>
+        <textarea id="body" rows="14" th:field="*{body}" maxlength="20000"></textarea>
+        <div class="matts" th:if="${!#lists.isEmpty(files)}">
+          <b>Attached to this draft</b>
+          <label class="mfile" th:each="f : ${files}"><input type="checkbox" name="removeAtt" th:value="${f.id}"> Remove <span th:text="${f.filename}">file</span> <small th:text="'(' + ${f.sizeLabel} + ')'">(1 KB)</small></label>
+        </div>
+        <label for="files">Attach files</label>
+        <input type="file" id="files" name="files" multiple>
+        <p class="small muted">Up to 10 files, 5 MB each and 10 MB in total. Programs and scripts (such as .exe, .bat, .js) are not allowed.</p>
+        <p class="btn-row">
+          <button class="btn" type="submit">Send</button>
+          <button class="btn line" type="submit" th:formaction="@{/mail/draft}">Save draft</button>
+          <a class="btn line" th:href="@{/mail/folder/inbox}">Discard</a>
+        </p>
+      </form>
+    </div>
+  </section>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

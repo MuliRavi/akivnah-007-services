@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Contact')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<section class="phero"><div class="wrap"><p class="eyebrow">Contact</p><h1>Let's build something together.</h1><p class="lead">Tell us about your project. We will reply within one working day.</p></div></section>
+<section class="s"><div class="wrap split">
+  <div class="card">
+    <h3 style="margin-top:0">Send us a message</h3>
+    <div class="alert ok" th:if="${param.sent}">Thank you! Your message has been received and we will reply soon.</div>
+    <form th:action="@{/contact}" th:object="${form}" method="post">
+      <div class="hp" aria-hidden="true"><label>Leave this empty<input type="text" th:field="*{website}" tabindex="-1" autocomplete="off"></label></div>
+      <div><label>Your name<input type="text" th:field="*{name}"></label><div class="error" th:errors="*{name}"></div></div>
+      <div><label>Email<input type="email" th:field="*{email}"></label><div class="error" th:errors="*{email}"></div></div>
+      <div><label>I am interested in
+        <select th:field="*{service}">
+          <option th:each="o : ${serviceOptions}" th:value="${o}" th:text="${o}">Custom software</option>
+        </select></label></div>
+      <div><label>Message<textarea rows="5" th:field="*{message}"></textarea></label><div class="error" th:errors="*{message}"></div></div>
+      <button class="btn" type="submit">Send message</button>
+    </form>
+  </div>
+  <div>
+    <h2 style="font-size:1.6rem">Get in touch</h2>
+    <p><b>Email</b><br><a href="mailto:hello@akivnah.com">hello@akivnah.com</a></p>
+    <p><b>Phone</b><br>+91 00000 00000</p>
+    <p><b>Address</b><br>[Street Address, City - PIN]</p>
+    <p><b>Hours</b><br>Mon&ndash;Fri, 9:30 am &ndash; 6:30 pm IST</p>
+  </div>
+</div></section>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

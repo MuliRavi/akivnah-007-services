@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/app.css}">
+  
+   
   <script>
     // Back/forward button: never show a stale private page, re-ask the server instead
     window.addEventListener('pageshow', function (e) {
@@ -18,6 +20,9 @@
     });
   </script>
 </head>
+<th:block th:fragment="employeeStyles">
+    <link rel="stylesheet" th:href="@{/css/employees.css}">
+</th:block>
 <body>
 
 <!-- ========== HEADER ========== -->
@@ -57,14 +62,81 @@
   <a class="btn" th:href="@{/contact}">Talk to us</a></div></div></section>
 
 <!-- ========== FOOTER ========== -->
-<footer th:fragment="footer"><div class="wrap">
+<!--<footer th:fragment="footer"><div class="wrap">
   <div class="cols">
     <div><img th:src="@{/images/logo-dark.svg}" alt="Akivnah"><p>Software that moves your business forward. Web, mobile, cloud and data solutions built to last.</p></div>
     <div><h4>Company</h4><a th:href="@{/about}">About</a><a th:href="@{/work}">Work</a><a th:href="@{/careers}">Careers</a><a th:href="@{/insights}">Insights</a><a th:href="@{/contact}">Contact</a></div>
     <div><h4>Services</h4><a th:href="@{/services}">All services</a><a th:href="@{/catalog}">Service catalog</a><a th:href="@{/login}">Employee login</a></div>
-    <div><h4>Contact</h4><a href="mailto:hello@akivnah.com">hello@akivnah.com</a><span>+91 00000 00000</span><br><span>[Street Address, City - PIN]</span></div>
+    <div><h4>Contact</h4><a href="mailto:hello@akivnah.com">hr@akivnah.com</a><span>+91 04027117018</span><br><span>G.R.REDDY NAGAR, KAPRA, HYD - 500062</span></div>
   </div>
-  <div class="legal">&copy; <span th:text="${#temporals.year(#temporals.createNow())}">2026</span> Akivnah &middot; [Full Registered Company Name] &middot; CIN: [Company Identification Number]</div>
-</div></footer>
+  <div class="legal">&copy; <span th:text="${#temporals.year(#temporals.createNow())}">2026</span> Akivnah &middot; Akivnah Software Solutions &middot; CIN: [Company Identification Number]</div>
+</div></footer>-->
+ <footer th:fragment="footer" class="site-footer">
+  <div class="wrap">
+    <div class="footer-main">
+
+      <!-- Brand -->
+      <div class="footer-brand">
+        <a th:href="@{/}" class="footer-logo">
+          <img th:src="@{/images/logo-dark.svg}" alt="Akivnah Software Solutions">
+        </a>
+        <p class="footer-description">
+          Software that moves your business forward.
+          We build reliable web, mobile, cloud and data solutions
+          that help businesses grow.
+        </p>
+        <a class="footer-email" href="mailto:hr@akivnah.com">
+          <span>✉</span> hr@akivnah.com
+        </a>
+      </div>
+
+      <!-- Company -->
+      <div class="footer-column">
+        <h4>Company</h4>
+        <a th:href="@{/about}">About us</a>
+        <a th:href="@{/work}">Our work</a>
+        <a th:href="@{/careers}">Careers</a>
+        <a th:href="@{/insights}">Insights</a>
+        <a th:href="@{/contact}">Contact us</a>
+      </div>
+
+      <!-- Services -->
+      <div class="footer-column">
+        <h4>Our services</h4>
+        <a th:href="@{/services}">All services</a>
+        <a th:href="@{/catalog}">Service catalog</a>
+        <a th:href="@{/login}">Employee login</a>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-column footer-contact">
+        <h4>Get in touch</h4>
+        <p class="contact-label">Phone</p>
+        <a href="tel:+9104027117018">+91 040 2711 7018</a>
+
+        <p class="contact-label">Office address</p>
+        <p>G. R. Reddy Nagar,<br>
+           Kapra, Hyderabad – 500062,<br>
+           Telangana, India.</p>
+
+        <a class="footer-contact-button" th:href="@{/contact}">
+          Contact our team <span>→</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Copyright -->
+    <div class="footer-bottom">
+      <p>
+        &copy;
+        <span th:text="${#temporals.year(#temporals.createNow())}">2026</span>
+        Akivnah Software Solutions. All rights reserved.
+      </p>
+
+      <p class="footer-tagline">Built with purpose. Designed for growth.</p>
+    </div>
+  </div>
+</footer>
 </body>
 </html>

@@ -1,23 +1,143 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head th:replace="~{fragments :: head('Dashboard')}"></head>
-<body>
+
+<body class="dashboard-page">
+
 <header th:replace="~{fragments :: nav}"></header>
-<main>
-  <h1>Welcome, <span th:text="${username}">user</span></h1>
-  <p>Signed in with role:
-    <strong th:each="r : ${roles}" th:text="${#strings.replace(r.authority,'ROLE_','')}">USER</strong>
-  </p>
-  <p sec:authorize="hasRole('ADMIN')"><a class="btn" th:href="@{/admin/services}">Manage services</a></p>
-  <h2>Available services</h2>
-  <div class="grid">
-    <div class="card" th:each="s : ${services}">
-      <h3 th:text="${s.name}">Service</h3>
-      <p th:text="${s.description}">Description</p>
-      <span class="price" th:text="'From ₹' + ${#numbers.formatDecimal(s.price,1,'COMMA',2,'POINT')}">₹0</span>
+
+<main class="dashboard-main">
+    <div class="wrap">
+
+        <!-- Dashboard heading -->
+        <section class="dashboard-heading">
+            <div>
+                <p class="dashboard-eyebrow">AKIVNAH SOFTWARE SOLUTIONS</p>
+
+                <h1>
+                    Welcome back,
+                    <span th:text="${username != null ? username : 'User'}">User</span>!
+                </h1>
+
+                <p class="dashboard-subtitle">
+                    Explore our services and manage your account from one place.
+                </p>
+            </div>
+
+            <div class="dashboard-welcome-icon" aria-hidden="true">
+                <span>✦</span>
+            </div>
+        </section>
+
+        <!-- User role -->
+        <section class="dashboard-account-card">
+            <div class="account-icon" aria-hidden="true">♙</div>
+
+            <div class="account-info">
+                <h2>Your account</h2>
+                <p>You are signed in successfully.</p>
+            </div>
+
+            <div class="account-roles">
+                <span class="role-badge"
+                      th:each="r : ${roles}"
+                      th:text="${#strings.replace(r.authority, 'ROLE_', '')}">
+                    USER
+                </span>
+            </div>
+        </section>
+
+        <!-- Admin shortcut -->
+        <section class="dashboard-admin-card"
+                 sec:authorize="hasRole('ADMIN')">
+            <div>
+                <p class="dashboard-eyebrow">ADMINISTRATION</p>
+                <h2>Manage your services</h2>
+                <p>
+                    Add, update, and manage the services displayed on your website.
+                </p>
+            </div>
+
+            <a class="dashboard-primary-button"
+               th:href="@{/admin/services}">
+                Manage Services
+                <span aria-hidden="true">→</span>
+            </a>
+        </section>
+
+        <!-- Services section -->
+        <section class="dashboard-services-section">
+
+            <div class="dashboard-section-heading">
+                <div>
+                    <p class="dashboard-eyebrow">WHAT WE OFFER</p>
+                    <h2>Available Services</h2>
+                    <p class="dashboard-subtitle">
+                        Discover services available through Akivnah.
+                    </p>
+                </div>
+
+                <span class="service-total"
+                      th:text="${#lists.size(services)} + ' services'">
+                    0 services
+                </span>
+            </div>
+
+            <!-- Service cards -->
+            <div class="dashboard-service-grid">
+
+                <article class="dashboard-service-card"
+                         th:each="s, stat : ${services}">
+
+                    <div class="service-card-top">
+                        <span class="service-card-icon" aria-hidden="true">
+                            <span th:text="${stat.count < 10
+                                ? '0' + stat.count : stat.count}">01</span>
+                        </span>
+
+                        <span class="service-card-arrow" aria-hidden="true">↗</span>
+                    </div>
+
+                    <h3 th:text="${s.name}">Service Name</h3>
+
+                    <p class="service-description"
+                       th:text="${s.description != null
+                           ? s.description : 'Contact us to learn more about this service.'}">
+                        Service description
+                    </p>
+
+                    <div class="service-card-bottom">
+                        <div>
+                            <span class="service-price-label">Starting from</span>
+
+                            <strong class="service-price"
+                                    th:text="'₹' + ${#numbers.formatDecimal(s.price, 1, 'COMMA', 2, 'POINT')}">
+                                ₹0.00
+                            </strong>
+                        </div>
+                    </div>
+
+                </article>
+
+                <!-- Empty state -->
+                <div class="dashboard-empty-state"
+                     th:if="${#lists.isEmpty(services)}">
+                    <span class="empty-service-icon" aria-hidden="true">▤</span>
+                    <h3>No services available yet</h3>
+                    <p>
+                        Our services will appear here once they have been published.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
     </div>
-  </div>
 </main>
+
 <footer th:replace="~{fragments :: footer}"></footer>
+
 </body>
 </html>

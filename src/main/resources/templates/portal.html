@@ -1,45 +1,372 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments :: head('Employee Portal')}"></head>
-<body>
+
+<body class="employee-portal-page">
+
 <header th:replace="~{fragments :: nav}"></header>
-<main>
-  <h1>Employee Portal</h1>
-  <div class="alert bad" th:if="${employee == null}">No employee profile is linked to your login. Please contact HR.</div>
-  <div th:if="${employee != null}">
-    <div class="panel wide">
-      <h2 th:text="${employee.fullName}">Name</h2>
-      <p><strong th:text="${employee.designation}">Designation</strong> &middot; <span th:text="${employee.department}">Dept</span><br>
-         Employee ID: <span th:text="${employee.employeeCode}">AKV001</span> &middot;
-         Joined <span th:text="${#temporals.format(employee.dateOfJoining,'dd MMMM yyyy')}">date</span></p>
+
+<main class="portal-main">
+    <div class="wrap">
+
+        <!-- Page heading -->
+        <section class="portal-heading">
+            <div>
+                <p class="portal-eyebrow">EMPLOYEE SELF-SERVICE</p>
+                <h1>Employee Portal</h1>
+                <p class="portal-subtitle">
+                    View your profile and access your employment documents.
+                </p>
+            </div>
+        </section>
+
+        <!-- Missing employee profile -->
+        <div class="alert bad portal-alert"
+             th:if="${employee == null}">
+            <strong>Profile not linked</strong>
+            <p>
+                No employee profile is linked to your login.
+                Please contact HR for assistance.
+            </p>
+        </div>
+
+        <!-- Show the dashboard only when an employee exists -->
+        <div th:if="${employee != null}">
+
+            <!-- Welcome banner -->
+            <section class="portal-welcome">
+                <div class="welcome-content">
+                    <span class="welcome-chip">✦ EMPLOYEE DASHBOARD</span>
+
+                    <h2>
+                        Welcome back,
+                        <span th:text="${employee.fullName != null
+                            ? employee.fullName : 'Employee'}">Employee</span>!
+                    </h2>
+
+                    <p>
+                        Your work documents and employment information,
+                        all in one place.
+                    </p>
+                </div>
+
+                <div class="welcome-art" aria-hidden="true">
+                    <div class="welcome-orbit orbit-one"></div>
+                    <div class="welcome-orbit orbit-two"></div>
+                    <div class="welcome-glass">
+                        <span>✦</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Summary cards -->
+            <section class="portal-stats">
+
+                <article class="portal-stat-card">
+                    <div class="stat-icon stat-icon-purple">▤</div>
+                    <div>
+                        <p>My Payslips</p>
+                        <strong th:text="${#lists.size(payslips)}">0</strong>
+                        <span>Available documents</span>
+                    </div>
+                </article>
+
+                <article class="portal-stat-card">
+                    <div class="stat-icon stat-icon-blue">♧</div>
+                    <div>
+                        <p>Offer Letters</p>
+                        <strong th:text="${#lists.size(offers)}">0</strong>
+                        <span>Employment records</span>
+                    </div>
+                </article>
+
+                <article class="portal-stat-card">
+                    <div class="stat-icon stat-icon-orange">↗</div>
+                    <div>
+                        <p>Increment Letters</p>
+                        <strong th:text="${#lists.size(increments)}">0</strong>
+                        <span>Salary revision records</span>
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- Employee profile -->
+            <section class="employee-profile-card">
+
+                <div class="profile-avatar" aria-hidden="true">
+                    <span th:text="${employee.fullName != null
+                        and !employee.fullName.isEmpty()
+                        ? #strings.substring(employee.fullName, 0, 1).toUpperCase()
+                        : 'E'}">E</span>
+                </div>
+
+                <div class="profile-details">
+                    <p class="profile-label">YOUR PROFILE</p>
+
+                    <h2 th:text="${employee.fullName != null
+                        ? employee.fullName : 'Employee'}">Employee Name</h2>
+
+                    <p class="profile-designation"
+                       th:text="${employee.designation != null
+                           ? employee.designation : 'Designation not provided'}">
+                        Designation
+                    </p>
+
+                    <div class="profile-meta">
+                        <span>
+                            <strong>Employee ID:</strong>
+                            <span th:text="${employee.employeeCode != null
+                                ? employee.employeeCode : 'Not available'}">AKV001</span>
+                        </span>
+
+                        <span>
+                            <strong>Department:</strong>
+                            <span th:text="${employee.department != null
+                                ? employee.department : 'Not assigned'}">Department</span>
+                        </span>
+
+                        <span>
+                            <strong>Date joined:</strong>
+                            <span th:if="${employee.dateOfJoining != null}"
+                                  th:text="${#temporals.format(employee.dateOfJoining, 'dd MMM yyyy')}">
+                                01 Jan 2026
+                            </span>
+                            <span th:if="${employee.dateOfJoining == null}">
+                                Not available
+                            </span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="profile-badge">
+                    <span class="profile-badge-dot"></span>
+                    Employee Account
+                </div>
+
+            </section>
+
+            <!-- Payslips -->
+            <section class="portal-document-section">
+
+                <div class="document-section-heading">
+                    <div>
+                        <h2>Payslips</h2>
+                        <p>Access and print your salary statements.</p>
+                    </div>
+
+                    <span class="document-count"
+                          th:text="${#lists.size(payslips)} + ' records'">
+                        0 records
+                    </span>
+                </div>
+
+                <div class="portal-table-card">
+                    <div class="portal-table-scroll">
+                        <table class="portal-table">
+                            <thead>
+                                <tr>
+                                    <th>Salary period</th>
+                                    <th>Net pay (INR)</th>
+                                    <th class="portal-action-heading">Document</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr th:each="p : ${payslips}">
+                                    <td>
+                                        <span class="document-primary"
+                                              th:text="${p.periodLabel}">
+                                            September 2026
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="salary-amount"
+                                              th:text="${#numbers.formatDecimal(p.netPay, 1, 'COMMA', 2, 'POINT')}">
+                                            0.00
+                                        </span>
+                                    </td>
+
+                                    <td class="portal-action-cell">
+                                        <a class="portal-view-button"
+                                           th:href="@{/documents/payslip/{id}(id=${p.id})}">
+                                            View / Print
+                                            <span aria-hidden="true">→</span>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(payslips)}">
+                                    <td colspan="3" class="portal-empty-cell">
+                                        <div class="portal-empty-state">
+                                            <span class="empty-state-icon"
+                                                  aria-hidden="true">▤</span>
+                                            <strong>No payslips available</strong>
+                                            <p>
+                                                Your payslips will appear here
+                                                when HR publishes them.
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Offer letters -->
+            <section class="portal-document-section">
+
+                <div class="document-section-heading">
+                    <div>
+                        <h2>Offer Letters</h2>
+                        <p>View your employment offer documents.</p>
+                    </div>
+
+                    <span class="document-count"
+                          th:text="${#lists.size(offers)} + ' records'">
+                        0 records
+                    </span>
+                </div>
+
+                <div class="portal-table-card">
+                    <div class="portal-table-scroll">
+                        <table class="portal-table">
+                            <thead>
+                                <tr>
+                                    <th>Reference number</th>
+                                    <th>Issue date</th>
+                                    <th class="portal-action-heading">Document</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr th:each="o : ${offers}">
+                                    <td>
+                                        <span class="document-primary"
+                                              th:text="${o.refNo}">
+                                            Offer reference
+                                        </span>
+                                    </td>
+
+                                    <td th:if="${o.issueDate != null}"
+                                        th:text="${#temporals.format(o.issueDate, 'dd MMM yyyy')}">
+                                        01 Jan 2026
+                                    </td>
+                                    <td th:if="${o.issueDate == null}">
+                                        Not available
+                                    </td>
+
+                                    <td class="portal-action-cell">
+                                        <a class="portal-view-button"
+                                           th:href="@{/documents/offer/{id}(id=${o.id})}">
+                                            View / Print
+                                            <span aria-hidden="true">→</span>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(offers)}">
+                                    <td colspan="3" class="portal-empty-cell">
+                                        <div class="portal-empty-state">
+                                            <span class="empty-state-icon"
+                                                  aria-hidden="true">▤</span>
+                                            <strong>No offer letters available</strong>
+                                            <p>
+                                                Your offer documents will appear
+                                                here when available.
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Increment letters -->
+            <section class="portal-document-section">
+
+                <div class="document-section-heading">
+                    <div>
+                        <h2>Increment Letters</h2>
+                        <p>Access your salary revision documents.</p>
+                    </div>
+
+                    <span class="document-count"
+                          th:text="${#lists.size(increments)} + ' records'">
+                        0 records
+                    </span>
+                </div>
+
+                <div class="portal-table-card">
+                    <div class="portal-table-scroll">
+                        <table class="portal-table">
+                            <thead>
+                                <tr>
+                                    <th>Reference number</th>
+                                    <th>Effective date</th>
+                                    <th class="portal-action-heading">Document</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr th:each="i : ${increments}">
+                                    <td>
+                                        <span class="document-primary"
+                                              th:text="${i.refNo}">
+                                            Increment reference
+                                        </span>
+                                    </td>
+
+                                    <td th:if="${i.effectiveDate != null}"
+                                        th:text="${#temporals.format(i.effectiveDate, 'dd MMM yyyy')}">
+                                        01 Jan 2026
+                                    </td>
+                                    <td th:if="${i.effectiveDate == null}">
+                                        Not available
+                                    </td>
+
+                                    <td class="portal-action-cell">
+                                        <a class="portal-view-button"
+                                           th:href="@{/documents/increment/{id}(id=${i.id})}">
+                                            View / Print
+                                            <span aria-hidden="true">→</span>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(increments)}">
+                                    <td colspan="3" class="portal-empty-cell">
+                                        <div class="portal-empty-state">
+                                            <span class="empty-state-icon"
+                                                  aria-hidden="true">▤</span>
+                                            <strong>No increment letters available</strong>
+                                            <p>
+                                                Your salary revision documents
+                                                will appear here when available.
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
     </div>
-
-    <h2>Payslips</h2>
-    <table>
-      <tr><th>Period</th><th>Net pay (INR)</th><th></th></tr>
-      <tr th:each="p : ${payslips}"><td th:text="${p.periodLabel}">Sep 2026</td>
-        <td th:text="${#numbers.formatDecimal(p.netPay,1,'COMMA',2,'POINT')}">0</td>
-        <td><a class="btn small" th:href="@{/documents/payslip/{id}(id=${p.id})}">View / Print</a></td></tr>
-      <tr th:if="${#lists.isEmpty(payslips)}"><td colspan="3">No payslips yet.</td></tr>
-    </table>
-
-    <h2>Offer letters</h2>
-    <table>
-      <tr><th>Reference</th><th>Issued</th><th></th></tr>
-      <tr th:each="o : ${offers}"><td th:text="${o.refNo}">ref</td><td th:text="${#temporals.format(o.issueDate,'dd MMM yyyy')}">d</td>
-        <td><a class="btn small" th:href="@{/documents/offer/{id}(id=${o.id})}">View / Print</a></td></tr>
-      <tr th:if="${#lists.isEmpty(offers)}"><td colspan="3">No offer letters yet.</td></tr>
-    </table>
-
-    <h2>Increment letters</h2>
-    <table>
-      <tr><th>Reference</th><th>Effective</th><th></th></tr>
-      <tr th:each="i : ${increments}"><td th:text="${i.refNo}">ref</td><td th:text="${#temporals.format(i.effectiveDate,'dd MMM yyyy')}">d</td>
-        <td><a class="btn small" th:href="@{/documents/increment/{id}(id=${i.id})}">View / Print</a></td></tr>
-      <tr th:if="${#lists.isEmpty(increments)}"><td colspan="3">No increment letters yet.</td></tr>
-    </table>
-  </div>
 </main>
+
 <footer th:replace="~{fragments :: footer}"></footer>
+
 </body>
 </html>

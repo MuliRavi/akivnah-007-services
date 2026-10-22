@@ -1,64 +1,1112 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: head('Employee')}"></head>
-<body>
+
+<head th:replace="~{fragments :: head('Employee Details')}"></head>
+
+<body class="employee-page">
+
 <header th:replace="~{fragments :: nav}"></header>
-<main>
-  <p><a th:href="@{/hr/employees}">&larr; All employees</a></p>
-  <h1 th:text="${employee.fullName} + ' (' + ${employee.employeeCode} + ')'">Name</h1>
-  <div class="alert ok" th:if="${param.created}">Employee saved to the database. Portal login: username <b th:text="${employee.employeeCode}">ID</b> with the initial password you set.</div>
-  <div class="alert ok" th:if="${param.updated}">Employee details updated.</div>
-  <div class="alert bad" th:if="${param.nodelete}">This login cannot be deleted here (it is your own account, an admin, or an HR user and you are not an administrator).</div>
-  <div class="alert ok" th:if="${tempPassword}">Temporary password for <b th:text="${employee.employeeCode}">ID</b>: <code th:text="${tempPassword}">xxxx</code> &ndash; shown only once. Give it to the employee privately and they are signed out everywhere and must choose their own password at the next sign-in.</div>
-  <div class="alert bad" th:if="${param.noreset}">The password for this login cannot be reset here (your own account, an admin, or an HR user and you are not an administrator).</div>
-  <div class="panel wide">
-    <p><strong th:text="${employee.designation}">Designation</strong> &middot; <span th:text="${employee.department}">Dept</span></p>
-    <p>Joined <span th:text="${#temporals.format(employee.dateOfJoining,'dd MMMM yyyy')}">date</span> &middot;
-       CTC INR <span th:text="${#numbers.formatDecimal(employee.annualCtc,1,'COMMA',2,'POINT')}">0</span> a year &middot;
-       <span th:text="${employee.email}">email</span></p>
-    <div class="btn-row">
-      <a class="btn" th:href="@{/hr/employees/{id}/offers/new(id=${employee.id})}">New offer letter</a>
-      <a class="btn" th:href="@{/hr/employees/{id}/payslips/new(id=${employee.id})}">New payslip</a>
-      <a class="btn" th:href="@{/hr/employees/{id}/increments/new(id=${employee.id})}">New increment letter</a>
-      <a class="btn line" th:href="@{/hr/employees/{id}/edit(id=${employee.id})}">Edit details</a>
-      <form th:action="@{/hr/employees/{id}/reset-password(id=${employee.id})}" method="post" style="display:inline"
-            onsubmit="return confirm('Create a new temporary password for this employee? Their current password stops working.')">
-        <button class="btn line" type="submit">Reset password</button>
-      </form>
-      <form th:action="@{/hr/employees/{id}/delete(id=${employee.id})}" method="post" style="display:inline"
-            onsubmit="return confirm('Delete this employee, all their letters and payslips, their portal login and mailbox? This cannot be undone.')">
-        <button class="btn danger" type="submit">Delete employee</button>
-      </form>
+
+<main class="employee-container">
+
+    <!-- Back Navigation -->
+    <a class="back-link" th:href="@{/hr/employees}">
+        <span>←</span> Back to Employees
+    </a>
+
+    <!-- Employee Profile Header -->
+    <section class="profile-header">
+        <div class="profile-main">
+            <div class="avatar"
+                 th:text="${#strings.isEmpty(employee.fullName) ? 'E' : #strings.substring(employee.fullName, 0, 1).toUpperCase()}">
+                
+            </div>
+
+            <div class="profile-info">
+                <span class="eyebrow">EMPLOYEE PROFILE</span>
+
+                <h1 th:text="${employee.fullName}">Employee Name</h1>
+
+                <p class="profile-subtitle">
+                    <span th:text="${employee.designation}">Designation</span>
+                    <span class="separator">•</span>
+                    <span th:text="${employee.department}">Department</span>
+                </p>
+
+                <span class="employee-id">
+                    ID:
+                    <strong th:text="${employee.employeeCode}">AKV001</strong>
+                </span>
+            </div>
+        </div>
+
+        <div class="profile-status">
+            <span class="status-dot"></span>
+            Employee Record
+        </div>
+    </section>
+
+    <!-- Notifications -->
+    <div class="alert alert-success" th:if="${param.created}">
+        <span class="alert-icon">✓</span>
+        <div>
+            <strong>Employee created successfully</strong>
+            <p>
+                Portal username:
+                <strong th:text="${employee.employeeCode}">AKV001</strong>.
+                The initial password was set during employee creation.
+            </p>
+        </div>
     </div>
-  </div>
 
-  <h2>Offer letters</h2>
-  <table>
-    <tr><th>Reference</th><th>Issued</th><th>Designation</th><th></th></tr>
-    <tr th:each="o : ${offers}"><td th:text="${o.refNo}">ref</td><td th:text="${#temporals.format(o.issueDate,'dd MMM yyyy')}">d</td><td th:text="${o.designation}">x</td>
-      <td><a class="btn small" th:href="@{/documents/offer/{id}(id=${o.id})}">View / Print</a></td></tr>
-    <tr th:if="${#lists.isEmpty(offers)}"><td colspan="4">None yet.</td></tr>
-  </table>
+    <div class="alert alert-success" th:if="${param.updated}">
+        <span class="alert-icon">✓</span>
+        <div>
+            <strong>Employee details updated</strong>
+            <p>The employee record has been saved successfully.</p>
+        </div>
+    </div>
 
-  <h2>Payslips</h2>
-  <table>
-    <tr><th>Period</th><th>Gross</th><th>Net pay</th><th></th></tr>
-    <tr th:each="p : ${payslips}"><td th:text="${p.periodLabel}">Sep 2026</td>
-      <td th:text="${#numbers.formatDecimal(p.grossEarnings,1,'COMMA',2,'POINT')}">0</td>
-      <td th:text="${#numbers.formatDecimal(p.netPay,1,'COMMA',2,'POINT')}">0</td>
-      <td><a class="btn small" th:href="@{/documents/payslip/{id}(id=${p.id})}">View / Print</a></td></tr>
-    <tr th:if="${#lists.isEmpty(payslips)}"><td colspan="4">None yet.</td></tr>
-  </table>
+    <div class="alert alert-danger" th:if="${param.nodelete}">
+        <span class="alert-icon">!</span>
+        <div>
+            <strong>Employee cannot be deleted</strong>
+            <p>This login is protected by your account role or its account status.</p>
+        </div>
+    </div>
 
-  <h2>Increment letters</h2>
-  <table>
-    <tr><th>Reference</th><th>Effective</th><th>New CTC</th><th></th></tr>
-    <tr th:each="i : ${increments}"><td th:text="${i.refNo}">ref</td><td th:text="${#temporals.format(i.effectiveDate,'dd MMM yyyy')}">d</td>
-      <td th:text="${#numbers.formatDecimal(i.newCtc,1,'COMMA',2,'POINT')}">0</td>
-      <td><a class="btn small" th:href="@{/documents/increment/{id}(id=${i.id})}">View / Print</a></td></tr>
-    <tr th:if="${#lists.isEmpty(increments)}"><td colspan="4">None yet.</td></tr>
-  </table>
+    <div class="alert alert-danger" th:if="${param.noreset}">
+        <span class="alert-icon">!</span>
+        <div>
+            <strong>Password reset not allowed</strong>
+            <p>This account cannot be reset by your current role.</p>
+        </div>
+    </div>
+
+    <div class="alert alert-warning" th:if="${tempPassword}">
+        <span class="alert-icon">!</span>
+        <div class="password-notice">
+            <strong>Temporary password generated</strong>
+            <p>
+                Account:
+                <strong th:text="${employee.employeeCode}">AKV001</strong>
+            </p>
+            <div class="temporary-password">
+                <span>Temporary password</span>
+                <code th:text="${tempPassword}">temporary-password</code>
+            </div>
+            <p>
+                This password is shown only once. Share it privately with the employee.
+                The employee must choose a new password at their next sign-in.
+            </p>
+        </div>
+    </div>
+
+    <!-- Overview Cards -->
+    <section class="overview-grid">
+
+        <article class="overview-card">
+            <div class="overview-icon icon-purple">₹</div>
+            <div>
+                <span class="overview-label">Annual CTC</span>
+                <strong class="overview-value">
+                    ₹<span th:text="${#numbers.formatDecimal(employee.annualCtc,1,'COMMA',2,'POINT')}">0.00</span>
+                </strong>
+                <span class="overview-hint">Annual compensation</span>
+            </div>
+        </article>
+
+        <article class="overview-card">
+            <div class="overview-icon icon-blue">▦</div>
+            <div>
+                <span class="overview-label">Department</span>
+                <strong class="overview-value"
+                        th:text="${employee.department}">Engineering</strong>
+                <span class="overview-hint">Assigned department</span>
+            </div>
+        </article>
+
+        <article class="overview-card">
+            <div class="overview-icon icon-green">✓</div>
+            <div>
+                <span class="overview-label">Date of Joining</span>
+                <strong class="overview-value"
+                        th:text="${employee.dateOfJoining != null ? #temporals.format(employee.dateOfJoining,'dd MMM yyyy') : '-'}">
+                    01 Jan 2026
+                </strong>
+                <span class="overview-hint">Employment start date</span>
+            </div>
+        </article>
+
+    </section>
+
+    <!-- Employee Information -->
+    <section class="content-card">
+
+        <div class="section-heading">
+            <div>
+                <h2>Employment Information</h2>
+                <p>Personal and professional details for this employee.</p>
+            </div>
+
+            <a class="btn btn-outline"
+               th:href="@{/hr/employees/{id}/edit(id=${employee.id})}">
+                ✎ Edit Details
+            </a>
+        </div>
+
+        <div class="details-grid">
+
+            <div class="detail-item">
+                <span>Full Name</span>
+                <strong th:text="${employee.fullName}">Employee Name</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Employee ID</span>
+                <strong th:text="${employee.employeeCode}">AKV001</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Email Address</span>
+                <strong class="detail-email"
+                        th:text="${employee.email}">employee@example.com</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Designation</span>
+                <strong th:text="${employee.designation}">Software Engineer</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Department</span>
+                <strong th:text="${employee.department}">Engineering</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Date of Joining</span>
+                <strong th:text="${employee.dateOfJoining != null ? #temporals.format(employee.dateOfJoining,'dd MMMM yyyy') : '-'}">
+                    01 January 2026
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Annual CTC</span>
+                <strong>
+                    ₹<span th:text="${#numbers.formatDecimal(employee.annualCtc,1,'COMMA',2,'POINT')}">0.00</span>
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span>PAN Number</span>
+                <strong th:text="${employee.panNumber != null and !#strings.isEmpty(employee.panNumber) ? employee.panNumber : 'Not provided'}">
+                    Not provided
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Bank Account Number</span>
+                <strong th:text="${employee.bankAccount != null and !#strings.isEmpty(employee.bankAccount) ? employee.bankAccount : 'Not provided'}">
+                    Not provided
+                </strong>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Employee Actions -->
+    <section class="content-card">
+
+        <div class="section-heading">
+            <div>
+                <h2>Employee Actions</h2>
+                <p>Create official documents or manage portal access.</p>
+            </div>
+        </div>
+
+        <div class="action-grid">
+
+            <a class="action-card"
+               th:href="@{/hr/employees/{id}/offers/new(id=${employee.id})}">
+                <div class="action-icon offer-icon">✉</div>
+                <div class="action-copy">
+                    <strong>Create Offer Letter</strong>
+                    <span>Generate a formal employment offer.</span>
+                </div>
+                <span class="action-arrow">→</span>
+            </a>
+
+            <a class="action-card"
+               th:href="@{/hr/employees/{id}/payslips/new(id=${employee.id})}">
+                <div class="action-icon payslip-icon">₹</div>
+                <div class="action-copy">
+                    <strong>Generate Payslip</strong>
+                    <span>Create a monthly salary statement.</span>
+                </div>
+                <span class="action-arrow">→</span>
+            </a>
+
+            <a class="action-card"
+               th:href="@{/hr/employees/{id}/increments/new(id=${employee.id})}">
+                <div class="action-icon increment-icon">↗</div>
+                <div class="action-copy">
+                    <strong>Create Increment Letter</strong>
+                    <span>Record a salary revision.</span>
+                </div>
+                <span class="action-arrow">→</span>
+            </a>
+
+        </div>
+
+        <div class="account-actions">
+
+            <div>
+                <strong>Portal Account</strong>
+                <p>Manage this employee's login credentials.</p>
+            </div>
+
+            <form th:action="@{/hr/employees/{id}/reset-password(id=${employee.id})}"
+                  method="post"
+                  onsubmit="return confirm('Create a new temporary password for this employee? Their current password will stop working.')">
+
+                <button class="btn btn-outline" type="submit">
+                    ↻ Reset Password
+                </button>
+            </form>
+
+        </div>
+
+        <div class="danger-zone">
+            <div>
+                <strong>Delete Employee</strong>
+                <p>
+                    This action may permanently remove associated records,
+                    documents, portal access and mailbox data.
+                </p>
+            </div>
+
+            <form th:action="@{/hr/employees/{id}/delete(id=${employee.id})}"
+                  method="post"
+                  onsubmit="return confirm('Delete this employee, all their letters and payslips, their portal login and mailbox? This cannot be undone.')">
+
+                <button class="btn btn-danger" type="submit">
+                    Delete Employee
+                </button>
+            </form>
+        </div>
+
+    </section>
+
+    <!-- Offer Letters -->
+    <section class="content-card document-section">
+
+        <div class="section-heading">
+            <div>
+                <h2>Offer Letters</h2>
+                <p>Employment offers issued to this employee.</p>
+            </div>
+            <span class="document-count"
+                  th:text="${#lists.size(offers)} + ' records'">0 records</span>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="document-table">
+                <thead>
+                <tr>
+                    <th>Reference Number</th>
+                    <th>Issue Date</th>
+                    <th>Designation</th>
+                    <th>Document</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="o : ${offers}">
+                    <td>
+                        <strong th:text="${o.refNo}">OFR-001</strong>
+                    </td>
+                    <td th:text="${o.issueDate != null ? #temporals.format(o.issueDate,'dd MMM yyyy') : '-'}">
+                        01 Sep 2026
+                    </td>
+                    <td th:text="${o.designation}">Software Engineer</td>
+                    <td>
+                        <a class="document-link"
+                           th:href="@{/documents/offer/{id}(id=${o.id})}">
+                            View / Print →
+                        </a>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(offers)}">
+                    <td colspan="4" class="empty-row">
+                        No offer letters have been created yet.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Payslips -->
+    <section class="content-card document-section">
+
+        <div class="section-heading">
+            <div>
+                <h2>Payslips</h2>
+                <p>Monthly salary statements and payment summaries.</p>
+            </div>
+            <span class="document-count"
+                  th:text="${#lists.size(payslips)} + ' records'">0 records</span>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="document-table">
+                <thead>
+                <tr>
+                    <th>Salary Period</th>
+                    <th>Gross Earnings</th>
+                    <th>Net Pay</th>
+                    <th>Document</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="p : ${payslips}">
+                    <td>
+                        <strong th:text="${p.periodLabel}">Sep 2026</strong>
+                    </td>
+                    <td>
+                        ₹<span th:text="${#numbers.formatDecimal(p.grossEarnings,1,'COMMA',2,'POINT')}">0.00</span>
+                    </td>
+                    <td>
+                        <strong class="net-pay">
+                            ₹<span th:text="${#numbers.formatDecimal(p.netPay,1,'COMMA',2,'POINT')}">0.00</span>
+                        </strong>
+                    </td>
+                    <td>
+                        <a class="document-link"
+                           th:href="@{/documents/payslip/{id}(id=${p.id})}">
+                            View / Print →
+                        </a>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(payslips)}">
+                    <td colspan="4" class="empty-row">
+                        No payslips have been generated yet.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Increment Letters -->
+    <section class="content-card document-section">
+
+        <div class="section-heading">
+            <div>
+                <h2>Increment Letters</h2>
+                <p>Salary revisions and updated compensation details.</p>
+            </div>
+            <span class="document-count"
+                  th:text="${#lists.size(increments)} + ' records'">0 records</span>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="document-table">
+                <thead>
+                <tr>
+                    <th>Reference Number</th>
+                    <th>Effective Date</th>
+                    <th>Revised Annual CTC</th>
+                    <th>Document</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="i : ${increments}">
+                    <td>
+                        <strong th:text="${i.refNo}">INC-001</strong>
+                    </td>
+                    <td th:text="${i.effectiveDate != null ? #temporals.format(i.effectiveDate,'dd MMM yyyy') : '-'}">
+                        01 Oct 2026
+                    </td>
+                    <td>
+                        <strong>
+                            ₹<span th:text="${#numbers.formatDecimal(i.newCtc,1,'COMMA',2,'POINT')}">0.00</span>
+                        </strong>
+                    </td>
+                    <td>
+                        <a class="document-link"
+                           th:href="@{/documents/increment/{id}(id=${i.id})}">
+                            View / Print →
+                        </a>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(increments)}">
+                    <td colspan="4" class="empty-row">
+                        No increment letters have been issued yet.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
 </main>
+
 <footer th:replace="~{fragments :: footer}"></footer>
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-dark: #4338ca;
+        --text: #172033;
+        --muted: #687386;
+        --border: #e5e9f2;
+        --background: #f5f7fb;
+        --white: #ffffff;
+    }
+
+    body.employee-page {
+        margin: 0;
+        background: var(--background);
+        color: var(--text);
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    .employee-container {
+        width: min(1280px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: 32px 0 64px;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 22px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+    }
+
+    .back-link:hover {
+        color: var(--primary);
+    }
+
+    .back-link span {
+        font-size: 19px;
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 24px;
+        padding: 30px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--white);
+        box-shadow: 0 6px 24px rgb(24 39 75 / 4%);
+    }
+
+    .profile-main {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        min-width: 0;
+    }
+
+    .avatar {
+        display: grid;
+        flex-shrink: 0;
+        width: 76px;
+        height: 76px;
+        place-items: center;
+        border-radius: 22px;
+        background: #e9eaff;
+        color: var(--primary);
+        font-size: 31px;
+        font-weight: 800;
+    }
+
+    .eyebrow {
+        color: var(--primary);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.7px;
+    }
+
+    .profile-info h1 {
+        overflow-wrap: anywhere;
+        margin: 7px 0;
+        font-size: clamp(25px, 3vw, 32px);
+        letter-spacing: -0.8px;
+    }
+
+    .profile-subtitle {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .separator {
+        color: #b1b8c5;
+    }
+
+    .employee-id {
+        display: inline-flex;
+        gap: 6px;
+        padding: 6px 9px;
+        border-radius: 7px;
+        background: #f0f1ff;
+        color: #5146a5;
+        font-size: 12px;
+    }
+
+    .profile-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+        padding: 9px 12px;
+        border: 1px solid #c9ecd6;
+        border-radius: 24px;
+        background: #f0fff5;
+        color: #267447;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #2eae65;
+    }
+
+    .alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding: 16px 18px;
+        border: 1px solid;
+        border-radius: 12px;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .alert p {
+        margin: 5px 0 0;
+    }
+
+    .alert-icon {
+        display: grid;
+        flex-shrink: 0;
+        width: 25px;
+        height: 25px;
+        place-items: center;
+        border-radius: 50%;
+        font-weight: 800;
+    }
+
+    .alert-success {
+        border-color: #b9e8cb;
+        background: #edfff3;
+        color: #207344;
+    }
+
+    .alert-success .alert-icon {
+        background: #d1f5de;
+    }
+
+    .alert-danger {
+        border-color: #f3c7c7;
+        background: #fff3f3;
+        color: #a52b2b;
+    }
+
+    .alert-danger .alert-icon {
+        background: #ffe0e0;
+    }
+
+    .alert-warning {
+        border-color: #f0d69b;
+        background: #fffaf0;
+        color: #805817;
+    }
+
+    .alert-warning .alert-icon {
+        background: #ffedc2;
+    }
+
+    .temporary-password {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        margin-top: 12px;
+        padding: 12px;
+        border: 1px solid #f0d69b;
+        border-radius: 8px;
+        background: #fff;
+    }
+
+    .temporary-password code {
+        overflow-wrap: anywhere;
+        color: #6845b5;
+        font-size: 14px;
+        font-weight: 750;
+    }
+
+    .overview-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .overview-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        min-width: 0;
+        padding: 23px;
+        border: 1px solid var(--border);
+        border-radius: 15px;
+        background: var(--white);
+        box-shadow: 0 5px 20px rgb(24 39 75 / 3%);
+    }
+
+    .overview-icon {
+        display: grid;
+        flex-shrink: 0;
+        width: 46px;
+        height: 46px;
+        place-items: center;
+        border-radius: 13px;
+        font-size: 22px;
+        font-weight: 750;
+    }
+
+    .icon-purple {
+        background: #f0eaff;
+        color: #7645c1;
+    }
+
+    .icon-blue {
+        background: #e6f2ff;
+        color: #246cbb;
+    }
+
+    .icon-green {
+        background: #e4f8ec;
+        color: #25804c;
+    }
+
+    .overview-card > div:last-child {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        gap: 7px;
+    }
+
+    .overview-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .overview-value {
+        overflow-wrap: anywhere;
+        font-size: clamp(16px, 1.5vw, 21px);
+        letter-spacing: -.4px;
+    }
+
+    .overview-hint {
+        color: #98a1b0;
+        font-size: 11px;
+    }
+
+    .content-card {
+        margin-bottom: 24px;
+        padding: 28px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--white);
+        box-shadow: 0 5px 20px rgb(24 39 75 / 3%);
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .section-heading h2 {
+        margin: 0 0 6px;
+        font-size: 20px;
+        letter-spacing: -.4px;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 40px;
+        padding: 10px 15px;
+        border: 1px solid transparent;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background .2s, border-color .2s;
+    }
+
+    .btn-outline {
+        border-color: #dfe2ed;
+        background: #fff;
+        color: #394459;
+    }
+
+    .btn-outline:hover {
+        border-color: #c8c9f8;
+        background: #f7f7ff;
+        color: var(--primary);
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-top: 1px solid var(--border);
+        border-left: 1px solid var(--border);
+        border-radius: 9px;
+        overflow: hidden;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 9px;
+        min-width: 0;
+        min-height: 78px;
+        padding: 17px;
+        border-right: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .detail-item > span {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .detail-item > strong {
+        overflow-wrap: anywhere;
+        color: #283247;
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+    .detail-email {
+        word-break: break-word;
+    }
+
+    .action-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .action-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        padding: 18px 14px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #fff;
+        color: inherit;
+        text-decoration: none;
+        transition: border-color .2s, background .2s, transform .2s;
+    }
+
+    .action-card:hover {
+        transform: translateY(-2px);
+        border-color: #c9c9ff;
+        background: #fafaff;
+    }
+
+    .action-icon {
+        display: grid;
+        flex-shrink: 0;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border-radius: 11px;
+        font-size: 20px;
+        font-weight: 750;
+    }
+
+    .offer-icon {
+        background: #f0eaff;
+        color: #7645c1;
+    }
+
+    .payslip-icon {
+        background: #e4f8ec;
+        color: #25804c;
+    }
+
+    .increment-icon {
+        background: #e6f2ff;
+        color: #246cbb;
+    }
+
+    .action-copy {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 0;
+    }
+
+    .action-copy strong {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .action-copy span {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .action-arrow {
+        flex-shrink: 0;
+        color: var(--primary);
+        font-size: 18px;
+    }
+
+    .account-actions,
+    .danger-zone {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-top: 22px;
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+    }
+
+    .account-actions > div,
+    .danger-zone > div {
+        min-width: 0;
+    }
+
+    .account-actions strong,
+    .danger-zone strong {
+        font-size: 13px;
+    }
+
+    .account-actions p,
+    .danger-zone p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .danger-zone {
+        border-color: #f0d8d8;
+        background: #fffafa;
+    }
+
+    .btn-danger {
+        flex-shrink: 0;
+        border-color: #efcaca;
+        background: #fff;
+        color: #bc3030;
+    }
+
+    .btn-danger:hover {
+        border-color: #dca1a1;
+        background: #fff0f0;
+    }
+
+    .document-count {
+        flex-shrink: 0;
+        padding: 7px 10px;
+        border-radius: 20px;
+        background: #f0f1ff;
+        color: #5146a5;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+    }
+
+    .document-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        text-align: left;
+        font-size: 13px;
+    }
+
+    .document-table th {
+        padding: 15px 17px;
+        border-bottom: 1px solid var(--border);
+        background: #f7f8fc;
+        color: #647084;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .6px;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .document-table td {
+        padding: 17px;
+        border-bottom: 1px solid #edf0f5;
+        color: #475467;
+        white-space: nowrap;
+    }
+
+    .document-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .document-table tbody tr:hover {
+        background: #fafaff;
+    }
+
+    .document-table td strong {
+        color: #283247;
+        font-weight: 650;
+    }
+
+    .net-pay {
+        color: #25804c !important;
+    }
+
+    .document-link {
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 750;
+        text-decoration: none;
+    }
+
+    .document-link:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+
+    .empty-row {
+        padding: 28px 16px !important;
+        color: #8992a2 !important;
+        text-align: center;
+        white-space: normal !important;
+    }
+
+    @media (max-width: 1000px) {
+        .overview-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .details-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 600px) {
+        .employee-container {
+            width: calc(100% - 28px);
+            padding-top: 22px;
+        }
+
+        .profile-header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .profile-main {
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 15px;
+            font-size: 24px;
+        }
+
+        .profile-status {
+            align-self: flex-start;
+        }
+
+        .content-card {
+            padding: 19px 14px;
+        }
+
+        .section-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .account-actions,
+        .danger-zone {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .account-actions .btn,
+        .danger-zone .btn {
+            width: 100%;
+        }
+
+        .document-count {
+            align-self: flex-start;
+        }
+    }
+</style>
+
 </body>
 </html>

@@ -1,37 +1,817 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: head('New payslip')}"></head>
-<body>
+
+<head th:replace="~{fragments :: head('New Payslip')}"></head>
+
+<body class="payslip-page">
+
 <header th:replace="~{fragments :: nav}"></header>
-<main>
-  <p><a th:href="@{/hr/employees/{id}(id=${employee.id})}">&larr; Back</a></p>
-  <h1>Payslip &ndash; <span th:text="${employee.fullName}">Name</span></h1>
-  <div class="panel wide">
-    <form th:action="@{/hr/employees/{id}/payslips(id=${employee.id})}" th:object="${payslip}" method="post">
-      <div class="cols">
-        <div><label>Month</label>
-          <select th:field="*{payMonth}"><option th:each="m, st : ${months}" th:value="${st.count}" th:text="${m}">Month</option></select>
-          <div class="error" th:errors="*{payMonth}"></div></div>
-        <div><label>Year</label><input type="number" th:field="*{payYear}"><div class="error" th:errors="*{payYear}"></div></div>
-        <div><label>Working days</label><input type="number" th:field="*{workingDays}"><div class="error" th:errors="*{workingDays}"></div></div>
-        <div><label>Days paid</label><input type="number" th:field="*{daysPaid}"><div class="error" th:errors="*{daysPaid}"></div></div>
-      </div>
-      <h3>Earnings (INR)</h3>
-      <div class="cols">
-        <div><label>Basic salary</label><input type="number" step="0.01" th:field="*{basic}"><div class="error" th:errors="*{basic}"></div></div>
-        <div><label>HRA</label><input type="number" step="0.01" th:field="*{hra}"><div class="error" th:errors="*{hra}"></div></div>
-        <div><label>Special allowance</label><input type="number" step="0.01" th:field="*{specialAllowance}"><div class="error" th:errors="*{specialAllowance}"></div></div>
-      </div>
-      <h3>Deductions (INR)</h3>
-      <div class="cols">
-        <div><label>Provident fund</label><input type="number" step="0.01" th:field="*{providentFund}"><div class="error" th:errors="*{providentFund}"></div></div>
-        <div><label>Professional tax</label><input type="number" step="0.01" th:field="*{professionalTax}"><div class="error" th:errors="*{professionalTax}"></div></div>
-        <div><label>Income tax (TDS)</label><input type="number" step="0.01" th:field="*{incomeTax}"><div class="error" th:errors="*{incomeTax}"></div></div>
-      </div>
-      <p><button class="btn" type="submit">Generate payslip</button></p>
+
+<main class="payslip-container">
+
+    <!-- Back Navigation -->
+    <a class="back-link"
+       th:href="@{/hr/employees/{id}(id=${employee.id})}">
+        <span>←</span> Back to Employee Profile
+    </a>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div>
+            <span class="eyebrow">PAYROLL MANAGEMENT</span>
+            <h1>Generate Payslip</h1>
+            <p>Create a monthly salary statement for this employee.</p>
+        </div>
+
+        <div class="header-icon">₹</div>
+    </section>
+
+    <!-- Employee Summary -->
+    <section class="employee-summary">
+        <div class="employee-avatar"
+             th:text="${#strings.isEmpty(employee.fullName) ? 'E' : #strings.substring(employee.fullName, 0, 1).toUpperCase()}">
+            E
+        </div>
+
+        <div class="employee-summary-info">
+            <span class="summary-label">EMPLOYEE</span>
+            <h2 th:text="${employee.fullName}">Employee Name</h2>
+            <div class="employee-meta">
+                <span>
+                    ID:
+                    <strong th:text="${employee.employeeCode}">AKV001</strong>
+                </span>
+                <span class="meta-separator">•</span>
+                <span th:text="${employee.designation}">Designation</span>
+                <span class="meta-separator">•</span>
+                <span th:text="${employee.department}">Department</span>
+            </div>
+        </div>
+
+        <div class="ctc-summary">
+            <span>Annual CTC</span>
+            <strong>
+                ₹<span th:text="${#numbers.formatDecimal(employee.annualCtc,1,'COMMA',2,'POINT')}">0.00</span>
+            </strong>
+        </div>
+    </section>
+
+    <!-- Payslip Form -->
+    <form class="payslip-form"
+          th:action="@{/hr/employees/{id}/payslips(id=${employee.id})}"
+          th:object="${payslip}"
+          method="post">
+
+        <!-- Pay Period -->
+        <section class="form-card">
+
+            <div class="section-heading">
+                <div class="section-icon period-icon">▦</div>
+                <div>
+                    <h2>Pay Period & Attendance</h2>
+                    <p>Specify the payroll month and attendance details.</p>
+                </div>
+            </div>
+
+            <div class="form-grid form-grid-four">
+
+                <div class="form-field">
+                    <label for="payMonth">Payroll Month <span>*</span></label>
+                    <select id="payMonth" th:field="*{payMonth}" required>
+                        <option value="">Select month</option>
+                        <option th:each="m, st : ${months}"
+                                th:value="${st.count}"
+                                th:text="${m}">Month</option>
+                    </select>
+                    <small class="field-hint">Select the salary month.</small>
+                    <div class="field-error" th:errors="*{payMonth}"></div>
+                </div>
+
+                <div class="form-field">
+                    <label for="payYear">Payroll Year <span>*</span></label>
+                    <input id="payYear"
+                           type="number"
+                           th:field="*{payYear}"
+                           min="2000"
+                           max="2100"
+                           placeholder="2026"
+                           required>
+                    <div class="field-error" th:errors="*{payYear}"></div>
+                </div>
+
+                <div class="form-field">
+                    <label for="workingDays">Working Days <span>*</span></label>
+                    <input id="workingDays"
+                           type="number"
+                           th:field="*{workingDays}"
+                           min="0"
+                           placeholder="26"
+                           required>
+                    <small class="field-hint">Total working days in the period.</small>
+                    <div class="field-error" th:errors="*{workingDays}"></div>
+                </div>
+
+                <div class="form-field">
+                    <label for="daysPaid">Days Paid <span>*</span></label>
+                    <input id="daysPaid"
+                           type="number"
+                           th:field="*{daysPaid}"
+                           min="0"
+                           placeholder="26"
+                           required>
+                    <small class="field-hint">Days payable for this month.</small>
+                    <div class="field-error" th:errors="*{daysPaid}"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Earnings -->
+        <section class="form-card">
+
+            <div class="section-heading">
+                <div class="section-icon earnings-icon">↗</div>
+                <div>
+                    <h2>Salary Earnings</h2>
+                    <p>Enter the salary components before deductions.</p>
+                </div>
+                <span class="section-tag earnings-tag">INR ₹</span>
+            </div>
+
+            <div class="form-grid form-grid-three">
+
+                <div class="form-field">
+                    <label for="basic">Basic Salary <span>*</span></label>
+                    <div class="input-with-prefix">
+                        <span>₹</span>
+                        <input id="basic"
+                               type="number"
+                               step="0.01"
+                               min="0"
+                               th:field="*{basic}"
+                               placeholder="0.00"
+                               required>
+                    </div>
+                    <div class="field-error" th:errors="*{basic}"></div>
+                </div>
+
+                <div class="form-field">
+                    <label for="hra">House Rent Allowance (HRA) <span>*</span></label>
+                    <div class="input-with-prefix">
+                        <span>₹</span>
+                        <input id="hra"
+                               type="number"
+                               step="0.01"
+                               min="0"
+                               th:field="*{hra}"
+                               placeholder="0.00"
+                               required>
+                    </div>
+                    <div class="field-error" th:errors="*{hra}"></div>
+                </div>
+
+                <div class="form-field">
+                    <label for="specialAllowance">Special Allowance <span>*</span></label>
+                    <div class="input-with-prefix">
+                        <span>₹</span>
+                        <input id="specialAllowance"
+                               type="number"
+                               step="0.01"
+                               min="0"
+                               th:field="*{specialAllowance}"
+                               placeholder="0.00"
+                               required>
+                    </div>
+                    <div class="field-error" th:errors="*{specialAllowance}"></div>
+                </div>
+
+            </div>
+
+            <div class="section-note earnings-note">
+                <span>ⓘ</span>
+                Enter the applicable monthly amounts for each salary component.
+            </div>
+        </section>
+
+        <!-- Deductions -->
+        <section class="form-card">
+
+            <div class="section-heading">
+                <div class="section-icon deductions-icon">↘</div>
+                <div>
+                    <h2>Salary Deductions</h2>
+                    <p>Enter applicable deductions for this payroll period.</p>
+                </div>
+                <span class="section-tag deductions-tag">INR ₹</span>
+            </div>
+
+            <div class="form-grid form-grid-three">
+
+                <div class="form-field">
+                    <label for="providentFund">Provident Fund (PF) <span>*</span></label>
+                    <div class="input-with-prefix">
+                        <span>₹</span>
+                        <input id="providentFund"
+                               type="number"
+                               step="0.01"
+                               min="0"
+                               th:field="*{providentFund}"
+                               placeholder="0.00"
+                               required>
+                    </div>
+                    <div class="field-error" th:errors="*{providentFund}"></div>
+                </div>
+
+                <div class="form-field">
+                    <label for="professionalTax">Professional Tax <span>*</span></label>
+                    <div class="input-with-prefix">
+                        <span>₹</span>
+                        <input id="professionalTax"
+                               type="number"
+                               step="0.01"
+                               min="0"
+                               th:field="*{professionalTax}"
+                               placeholder="0.00"
+                               required>
+                    </div>
+                    <div class="field-error" th:errors="*{professionalTax}"></div>
+                </div>
+
+                <div class="form-field">
+                    <label for="incomeTax">Income Tax (TDS) <span>*</span></label>
+                    <div class="input-with-prefix">
+                        <span>₹</span>
+                        <input id="incomeTax"
+                               type="number"
+                               step="0.01"
+                               min="0"
+                               th:field="*{incomeTax}"
+                               placeholder="0.00"
+                               required>
+                    </div>
+                    <div class="field-error" th:errors="*{incomeTax}"></div>
+                </div>
+
+            </div>
+
+            <div class="section-note deductions-note">
+                <span>ⓘ</span>
+                Enter the actual applicable deductions. Use 0.00 where a deduction does not apply.
+            </div>
+        </section>
+
+        <!-- Form Actions -->
+        <div class="form-footer">
+            <div class="footer-note">
+                <span class="required-mark">*</span>
+                Required fields
+                <p>Review all payroll values before generating the payslip.</p>
+            </div>
+
+            <div class="form-buttons">
+                <a class="btn btn-cancel"
+                   th:href="@{/hr/employees/{id}(id=${employee.id})}">
+                    Cancel
+                </a>
+
+                <button class="btn btn-primary" type="submit">
+                    <span>✓</span> Generate Payslip
+                </button>
+            </div>
+        </div>
+
     </form>
-  </div>
+
 </main>
+
 <footer th:replace="~{fragments :: footer}"></footer>
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-dark: #4338ca;
+        --text: #172033;
+        --muted: #687386;
+        --border: #e5e9f2;
+        --background: #f5f7fb;
+        --white: #ffffff;
+    }
+
+    body.payslip-page {
+        margin: 0;
+        background: var(--background);
+        color: var(--text);
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    .payslip-container {
+        width: min(1100px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: 32px 0 64px;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 25px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+    }
+
+    .back-link:hover {
+        color: var(--primary);
+    }
+
+    .back-link span {
+        font-size: 19px;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .eyebrow {
+        color: var(--primary);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.7px;
+    }
+
+    .page-header h1 {
+        margin: 8px 0;
+        font-size: clamp(27px, 3vw, 34px);
+        letter-spacing: -1px;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .header-icon {
+        display: grid;
+        flex-shrink: 0;
+        width: 62px;
+        height: 62px;
+        place-items: center;
+        border: 1px solid #dcdcff;
+        border-radius: 18px;
+        background: #ededff;
+        color: var(--primary);
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .employee-summary {
+        display: flex;
+        align-items: center;
+        gap: 17px;
+        margin-bottom: 24px;
+        padding: 22px 24px;
+        border: 1px solid var(--border);
+        border-radius: 15px;
+        background: var(--white);
+        box-shadow: 0 5px 20px rgb(24 39 75 / 3%);
+    }
+
+    .employee-avatar {
+        display: grid;
+        flex-shrink: 0;
+        width: 54px;
+        height: 54px;
+        place-items: center;
+        border-radius: 15px;
+        background: #e9eaff;
+        color: var(--primary);
+        font-size: 24px;
+        font-weight: 800;
+    }
+
+    .employee-summary-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .summary-label {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    .employee-summary h2 {
+        overflow-wrap: anywhere;
+        margin: 5px 0 8px;
+        font-size: 19px;
+    }
+
+    .employee-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .employee-meta strong {
+        color: #414c62;
+    }
+
+    .meta-separator {
+        color: #b2b9c6;
+    }
+
+    .ctc-summary {
+        display: flex;
+        flex-shrink: 0;
+        flex-direction: column;
+        gap: 7px;
+        padding-left: 22px;
+        border-left: 1px solid var(--border);
+    }
+
+    .ctc-summary span {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .ctc-summary strong {
+        font-size: 20px;
+        letter-spacing: -.4px;
+    }
+
+    .form-card {
+        margin-bottom: 22px;
+        padding: 27px;
+        border: 1px solid var(--border);
+        border-radius: 15px;
+        background: var(--white);
+        box-shadow: 0 5px 20px rgb(24 39 75 / 3%);
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 26px;
+    }
+
+    .section-icon {
+        display: grid;
+        flex-shrink: 0;
+        width: 45px;
+        height: 45px;
+        place-items: center;
+        border-radius: 13px;
+        font-size: 21px;
+        font-weight: 800;
+    }
+
+    .period-icon {
+        background: #e9efff;
+        color: #3866c4;
+    }
+
+    .earnings-icon {
+        background: #e4f8ec;
+        color: #25804c;
+    }
+
+    .deductions-icon {
+        background: #fff0e8;
+        color: #bd6334;
+    }
+
+    .section-heading h2 {
+        margin: 0 0 5px;
+        font-size: 18px;
+        letter-spacing: -.3px;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .section-tag {
+        margin-left: auto;
+        padding: 7px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .earnings-tag {
+        background: #e9f9ef;
+        color: #25804c;
+    }
+
+    .deductions-tag {
+        background: #fff0e8;
+        color: #bd6334;
+    }
+
+    .form-grid {
+        display: grid;
+        gap: 22px;
+    }
+
+    .form-grid-four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .form-grid-three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        gap: 9px;
+    }
+
+    .form-field label {
+        color: #354056;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.5;
+    }
+
+    .form-field label span {
+        color: #d64242;
+    }
+
+    .form-field input,
+    .form-field select {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        height: 45px;
+        padding: 0 12px;
+        border: 1px solid #dfe4ee;
+        border-radius: 9px;
+        outline: none;
+        background: #fff;
+        color: #263248;
+        font: inherit;
+        font-size: 13px;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .form-field input::placeholder {
+        color: #b1b8c5;
+    }
+
+    .form-field input:focus,
+    .form-field select:focus {
+        border-color: #8884f5;
+        box-shadow: 0 0 0 3px rgb(79 70 229 / 10%);
+    }
+
+    .form-field select {
+        cursor: pointer;
+    }
+
+    .input-with-prefix {
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        border: 1px solid #dfe4ee;
+        border-radius: 9px;
+        background: #fff;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .input-with-prefix:focus-within {
+        border-color: #8884f5;
+        box-shadow: 0 0 0 3px rgb(79 70 229 / 10%);
+    }
+
+    .input-with-prefix > span {
+        display: grid;
+        align-self: stretch;
+        flex-shrink: 0;
+        width: 38px;
+        place-items: center;
+        border-right: 1px solid #e8ebf2;
+        background: #f8f9fc;
+        color: #758096;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .input-with-prefix input {
+        height: 43px;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .input-with-prefix input:focus {
+        box-shadow: none;
+    }
+
+    .field-hint {
+        color: #8993a4;
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    .field-error {
+        color: #c43131;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .section-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        margin-top: 22px;
+        padding: 12px 14px;
+        border-radius: 9px;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .section-note > span {
+        flex-shrink: 0;
+        font-size: 14px;
+    }
+
+    .earnings-note {
+        background: #f1fbf4;
+        color: #37734d;
+    }
+
+    .deductions-note {
+        background: #fff7f1;
+        color: #98603c;
+    }
+
+    .form-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-top: 6px;
+        padding: 22px 0 0;
+        border-top: 1px solid #e0e5ef;
+    }
+
+    .footer-note {
+        color: #566176;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .footer-note p {
+        margin: 6px 0 0;
+        color: #8993a4;
+        font-size: 11px;
+        font-weight: 400;
+        line-height: 1.6;
+    }
+
+    .required-mark {
+        color: #d64242;
+    }
+
+    .form-buttons {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 43px;
+        padding: 11px 17px;
+        border: 1px solid transparent;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 750;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background .2s, border-color .2s;
+    }
+
+    .btn-cancel {
+        border-color: #dfe3ec;
+        background: #fff;
+        color: #495469;
+    }
+
+    .btn-cancel:hover {
+        background: #f6f7fb;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: #fff;
+        box-shadow: 0 4px 10px rgb(79 70 229 / 18%);
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+    }
+
+    @media (max-width: 950px) {
+        .form-grid-four {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .form-grid-three {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 600px) {
+        .payslip-container {
+            width: calc(100% - 28px);
+            padding-top: 22px;
+        }
+
+        .page-header h1 {
+            font-size: 27px;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 13px;
+        }
+
+        .employee-summary {
+            align-items: flex-start;
+            flex-wrap: wrap;
+            padding: 18px;
+        }
+
+        .employee-summary-info {
+            flex-basis: calc(100% - 75px);
+        }
+
+        .ctc-summary {
+            flex-basis: 100%;
+            margin-top: 8px;
+            padding: 14px 0 0;
+            border-top: 1px solid var(--border);
+            border-left: 0;
+        }
+
+        .form-card {
+            padding: 20px 15px;
+        }
+
+        .section-heading {
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .section-tag {
+            margin-left: 59px;
+        }
+
+        .form-grid-four,
+        .form-grid-three {
+            grid-template-columns: 1fr;
+        }
+
+        .form-footer {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .form-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+        }
+
+        .btn {
+            padding: 11px 10px;
+        }
+    }
+</style>
+
 </body>
 </html>

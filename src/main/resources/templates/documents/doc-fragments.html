@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title th:text="${title}">Akivnah Document</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Nunito+Sans:wght@400;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/doc.css}">
+</head>
+
+<body>
+
+    <!-- Print toolbar -->
+    <div class="toolbar noprint" th:fragment="toolbar">
+        <button type="button" onclick="window.print()">
+            Print / Save as PDF
+        </button>
+
+        <a class="plain"
+           href="javascript:history.back()"
+           aria-label="Go back to the previous page">
+            &larr; Back
+        </a>
+    </div>
+
+    <!-- Company document header -->
+    <div class="hdr" th:fragment="header">
+
+        <div class="hdr-brand">
+            <img th:src="@{/images/akivnah-icon.svg}"
+                 alt="Akivnah logo">
+
+            <div class="hdr-company">
+                <div class="name">Akivnah</div>
+                <div class="legal">Akivnah Software Solutions</div>
+            </div>
+        </div>
+
+        <div class="contact">
+            <span>G. R. Reddy Nagar, Kapra</span>
+            <span>Hyderabad - 500062, Telangana</span>
+            <a href="mailto:hr@akivnah.com">hr@akivnah.com</a>
+            <a href="https://www.akivnah.com">www.akivnah.com</a>
+        </div>
+
+    </div>
+
+    <!-- Company document footer -->
+    <div class="ftr" th:fragment="footer">
+        <div class="footer-company">
+            <strong>Akivnah Software Solutions</strong>
+        </div>
+
+        <div class="footer-registration">
+            <span>CIN: Not registered</span>
+            <span>GSTIN: Not registered</span>
+        </div>
+
+        <div class="footer-address">
+            Registered office: G. R. Reddy Nagar, Kapra, Hyderabad - 500062, Telangana
+        </div>
+    </div>
+
+</body>
+</html>

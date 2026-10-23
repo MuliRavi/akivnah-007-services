@@ -1,19 +1,145 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <body>
+
 <aside class="mside" th:fragment="side">
-  <a class="btn" th:href="@{/mail/compose}">&#9998; Compose</a>
-  <nav>
-    <a th:href="@{/mail/folder/inbox}" th:classappend="${active == 'inbox'} ? 'on'">Inbox <span class="pill" th:if="${counts.unread > 0}" th:text="${counts.unread}">0</span></a>
-    <a th:href="@{/mail/folder/starred}" th:classappend="${active == 'starred'} ? 'on'">Starred</a>
-    <a th:href="@{/mail/folder/sent}" th:classappend="${active == 'sent'} ? 'on'">Sent</a>
-    <a th:href="@{/mail/folder/outbox}" th:classappend="${active == 'outbox'} ? 'on'">Outbox <span class="pill grey" th:if="${counts.outbox > 0}" th:text="${counts.outbox}">0</span></a>
-    <a th:href="@{/mail/folder/drafts}" th:classappend="${active == 'drafts'} ? 'on'">Drafts <span class="pill grey" th:if="${counts.drafts > 0}" th:text="${counts.drafts}">0</span></a>
-    <a th:href="@{/mail/folder/trash}" th:classappend="${active == 'trash'} ? 'on'">Trash <span class="pill grey" th:if="${counts.trash > 0}" th:text="${counts.trash}">0</span></a>
-  </nav>
-  <nav><a th:href="@{/mail/settings}" th:classappend="${active == 'settings'} ? 'on'">Settings &amp; signature</a></nav>
-  <p class="small muted">Your address:<br><b th:text="${myEmail}">you@akivnah.com</b></p>
-  <p class="small muted" th:unless="${externalEnabled}">Mail to outside addresses is off until an admin sets up SMTP. Mail between colleagues works now.</p>
+
+    <!-- Compose -->
+    <a class="mail-compose-btn" th:href="@{/mail/compose}">
+        <span class="compose-icon" aria-hidden="true">&#9998;</span>
+        <span>Compose message</span>
+    </a>
+
+    <!-- Main folders -->
+    <div class="mail-side-label">MAILBOX</div>
+
+    <nav class="mail-side-nav" aria-label="Mail folders">
+
+        <a th:href="@{/mail/folder/inbox}"
+           th:classappend="${active == 'inbox'} ? ' on'">
+            <span class="side-link-main">
+                <span class="side-icon" aria-hidden="true">&#9993;</span>
+                <span>Inbox</span>
+            </span>
+            <span class="pill"
+                  th:if="${counts.unread > 0}"
+                  th:text="${counts.unread}">0</span>
+        </a>
+
+        <a th:href="@{/mail/folder/starred}"
+           th:classappend="${active == 'starred'} ? ' on'">
+            <span class="side-link-main">
+                <span class="side-icon" aria-hidden="true">&#9733;</span>
+                <span>Starred</span>
+            </span>
+        </a>
+
+        <a th:href="@{/mail/folder/sent}"
+           th:classappend="${active == 'sent'} ? ' on'">
+            <span class="side-link-main">
+                <span class="side-icon" aria-hidden="true">&#10148;</span>
+                <span>Sent</span>
+            </span>
+        </a>
+
+        <a th:href="@{/mail/folder/outbox}"
+           th:classappend="${active == 'outbox'} ? ' on'">
+            <span class="side-link-main">
+                <span class="side-icon" aria-hidden="true">&#8635;</span>
+                <span>Outbox</span>
+            </span>
+            <span class="pill grey"
+                  th:if="${counts.outbox > 0}"
+                  th:text="${counts.outbox}">0</span>
+        </a>
+
+        <a th:href="@{/mail/folder/drafts}"
+           th:classappend="${active == 'drafts'} ? ' on'">
+            <span class="side-link-main">
+                <span class="side-icon" aria-hidden="true">&#9998;</span>
+                <span>Drafts</span>
+            </span>
+            <span class="pill grey"
+                  th:if="${counts.drafts > 0}"
+                  th:text="${counts.drafts}">0</span>
+        </a>
+
+        <a th:href="@{/mail/folder/trash}"
+           th:classappend="${active == 'trash'} ? ' on'">
+            <span class="side-link-main">
+                <span class="side-icon" aria-hidden="true">&#128465;</span>
+                <span>Trash</span>
+            </span>
+            <span class="pill grey"
+                  th:if="${counts.trash > 0}"
+                  th:text="${counts.trash}">0</span>
+        </a>
+
+    </nav>
+
+    <!-- Settings -->
+    <div class="mail-side-label mail-settings-label">PREFERENCES</div>
+
+    <nav class="mail-side-nav" aria-label="Mail preferences">
+        <a th:href="@{/mail/settings}"
+           th:classappend="${active == 'settings'} ? ' on'">
+            <span class="side-link-main">
+                <span class="side-icon" aria-hidden="true">&#9881;</span>
+                <span>Settings &amp; signature</span>
+            </span>
+        </a>
+    </nav>
+
+    <!-- Account information -->
+    <div class="mail-account-card">
+        <span class="account-status-dot" aria-hidden="true"></span>
+        <div class="mail-account-content">
+            <span class="account-label">YOUR EMAIL ADDRESS</span>
+            <b class="mail-account-email"
+               th:text="${myEmail}">you@akivnah.com</b>
+        </div>
+    </div>
+
+    <!-- SMTP information -->
+    <div class="mail-smtp-notice" th:unless="${externalEnabled}">
+        <span class="smtp-notice-icon" aria-hidden="true">i</span>
+        <p>
+            External email is currently disabled. An admin needs to configure
+            SMTP. Internal colleague messaging is available.
+        </p>
+    </div>
+
 </aside>
+
 </body>
 </html>
+
+
+<!--<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<aside class="mside" th:fragment="side">
+		<a class="btn" th:href="@{/mail/compose}">&#9998; Compose</a>
+		<nav>
+			<a th:href="@{/mail/folder/inbox}" th:classappend="${active == 'inbox'} ? 'on'">Inbox <span class="pill"
+					th:if="${counts.unread > 0}" th:text="${counts.unread}">0</span></a>
+			<a th:href="@{/mail/folder/starred}" th:classappend="${active == 'starred'} ? 'on'">Starred</a>
+			<a th:href="@{/mail/folder/sent}" th:classappend="${active == 'sent'} ? 'on'">Sent</a>
+			<a th:href="@{/mail/folder/outbox}" th:classappend="${active == 'outbox'} ? 'on'">Outbox <span
+					class="pill grey" th:if="${counts.outbox > 0}" th:text="${counts.outbox}">0</span></a>
+			<a th:href="@{/mail/folder/drafts}" th:classappend="${active == 'drafts'} ? 'on'">Drafts <span
+					class="pill grey" th:if="${counts.drafts > 0}" th:text="${counts.drafts}">0</span></a>
+			<a th:href="@{/mail/folder/trash}" th:classappend="${active == 'trash'} ? 'on'">Trash <span
+					class="pill grey" th:if="${counts.trash > 0}" th:text="${counts.trash}">0</span></a>
+		</nav>
+		<nav><a th:href="@{/mail/settings}" th:classappend="${active == 'settings'} ? 'on'">Settings &amp; signature</a>
+		</nav>
+		<p class="small muted">Your address:<br><b th:text="${myEmail}">you@akivnah.com</b></p>
+		<p class="small muted" th:unless="${externalEnabled}">Mail to outside addresses is off until an admin sets up
+			SMTP. Mail between colleagues works now.</p>
+	</aside>
+</body>
+
+</html>-->

@@ -1,35 +1,72 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{documents/layout :: head('Offer Letter')}"></head>
+
+<head th:replace="~{documents/doc-fragments :: head('Offer Letter')}"></head>
+
 <body>
-<div th:replace="~{documents/layout :: toolbar}"></div>
-<div class="page"><table class="sheet">
-<thead><tr><td class="pad"><div th:replace="~{documents/layout :: header}"></div></td></tr></thead>
-<tbody><tr><td class="pad body">
-  <p class="right">Date: <span th:text="${#temporals.format(o.issueDate,'dd MMMM yyyy')}">date</span></p>
-  <p>Ref No: <span th:text="${o.refNo}">ref</span></p>
-  <h1 class="title">OFFER OF EMPLOYMENT</h1>
-  <p>Private &amp; Confidential</p>
-  <p>Dear <strong th:text="${o.employee.fullName}">Name</strong>,</p>
-  <p>We are pleased to offer you the position of <strong th:text="${o.designation}">Designation</strong> in the
-     <span th:text="${o.employee.department}">Dept</span> department at Akivnah, with effect from
-     <strong th:text="${#temporals.format(o.joiningDate,'dd MMMM yyyy')}">date</strong>.</p>
-  <p>Your annual cost to company (CTC) will be <strong>INR <span th:text="${#numbers.formatDecimal(o.annualCtc,1,'COMMA',2,'POINT')}">0</span></strong>
-     (INR <span th:text="${#numbers.formatDecimal(o.monthlyCtc,1,'COMMA',2,'POINT')}">0</span> per month), subject to applicable statutory deductions.</p>
-  <h2 class="sub">Terms and conditions</h2>
-  <ol class="terms">
-    <li>Probation: your employment begins with a probation period of <span th:text="${o.probationMonths}">6</span> months from the date of joining.</li>
-    <li>Notice period: either party may end the employment by giving <span th:text="${o.noticeDays}">30</span> days' written notice.</li>
-    <li>Confidentiality: you will keep all company and client information confidential during and after your employment.</li>
-    <li>This offer is subject to satisfactory verification of your documents and references.</li>
-  </ol>
-  <p>Please sign and return a copy of this letter as your acceptance. We look forward to welcoming you to Akivnah.</p>
-  <div class="sign"><p>Yours sincerely,</p>
-    <div class="line"><strong th:text="${o.signatoryName}">Signatory</strong><br><span th:text="${o.signatoryTitle}">Title</span>, Akivnah</div></div>
-  <div class="accept"><p><strong>Acceptance:</strong> I, <span th:text="${o.employee.fullName}">Name</span>, accept the above offer and its terms.</p>
-    <p>Signature: ______________________ &nbsp;&nbsp; Date: ______________</p></div>
-</td></tr></tbody>
-<tfoot><tr><td class="pad"><div th:replace="~{documents/layout :: footer}"></div></td></tr></tfoot>
-</table></div>
+	<div th:replace="~{documents/doc-fragments :: toolbar}"></div>
+	<div class="page">
+		<table class="sheet">
+			<thead>
+				<tr>
+					<td class="pad">
+						<div th:replace="~{documents/doc-fragments :: header}"></div>
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="pad body">
+						<p class="right">Date: <span
+								th:text="${#temporals.format(o.issueDate,'dd MMMM yyyy')}">date</span></p>
+						<p>Ref No: <span th:text="${o.refNo}">ref</span></p>
+						<h1 class="title">OFFER OF EMPLOYMENT</h1>
+						<p>Private &amp; Confidential</p>
+						<p>Dear <strong th:text="${o.employee.fullName}">Name</strong>,</p>
+						<p>We are pleased to offer you the position of <strong
+								th:text="${o.designation}">Designation</strong> in the
+							<span th:text="${o.employee.department}">Dept</span> department at Akivnah, with effect from
+							<strong th:text="${#temporals.format(o.joiningDate,'dd MMMM yyyy')}">date</strong>.
+						</p>
+						<p>Your annual cost to company (CTC) will be <strong>INR <span
+									th:text="${#numbers.formatDecimal(o.annualCtc,1,'COMMA',2,'POINT')}">0</span></strong>
+							(INR <span th:text="${#numbers.formatDecimal(o.monthlyCtc,1,'COMMA',2,'POINT')}">0</span>
+							per month), subject to applicable statutory deductions.</p>
+						<h2 class="sub">Terms and conditions</h2>
+						<ol class="terms">
+							<li>Probation: your employment begins with a probation period of <span
+									th:text="${o.probationMonths}">6</span> months from the date of joining.</li>
+							<li>Notice period: either party may end the employment by giving <span
+									th:text="${o.noticeDays}">30</span> days' written notice.</li>
+							<li>Confidentiality: you will keep all company and client information confidential during
+								and after your employment.</li>
+							<li>This offer is subject to satisfactory verification of your documents and references.
+							</li>
+						</ol>
+						<p>Please sign and return a copy of this letter as your acceptance. We look forward to welcoming
+							you to Akivnah.</p>
+						<div class="sign">
+							<p>Yours sincerely,</p>
+							<div class="line"><strong th:text="${o.signatoryName}">Signatory</strong><br><span
+									th:text="${o.signatoryTitle}">Title</span>, Akivnah</div>
+						</div>
+						<div class="accept">
+							<p><strong>Acceptance:</strong> I, <span th:text="${o.employee.fullName}">Name</span>,
+								accept the above offer and its terms.</p>
+							<p>Signature: ______________________ &nbsp;&nbsp; Date: ______________</p>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td class="pad">
+						<div th:replace="~{documents/doc-fragments :: footer}"></div>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
 </body>
+
 </html>

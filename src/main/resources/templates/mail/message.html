@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: head('View Message')}"></head>
+
+<body class="mail-page">
+
+<header th:replace="~{fragments :: nav}"></header>
+
+<main class="mailwrap">
+
+    <!-- Sidebar -->
+    <aside th:replace="~{mail/side :: side}"></aside>
+
+    <!-- Message detail -->
+    <section class="mmain message-page">
+
+        <a class="message-back"
+           th:href="@{/mail/folder/{f}(f=${active})}">
+            <span aria-hidden="true">&larr;</span>
+            Back to <span th:text="${title != null ? title : active}">Inbox</span>
+        </a>
+
+        <!-- Failed delivery -->
+        <div class="alert bad message-alert"
+             role="alert"
+             th:if="${m.sendStatus != null and m.sendStatus.name() == 'FAILED'}">
+
+            <div class="message-alert-icon" aria-hidden="true">!</div>
+
+            <div class="message-alert-content">
+                <strong>Message could not be sent</strong>
+                <p th:text="${m.errorMessage != null
+                    ? m.errorMessage : 'An error occurred while sending this message.'}">
+                    Sending error
+                </p>
+
+                <form th:action="@{/mail/message/{id}/retry(id=${m.id})}"
+                      method="post">
+                    <button class="btn small" type="submit">Try again</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Queued delivery -->
+        <div class="alert ok message-alert"
+             role="status"
+             th:if="${m.sendStatus != null and m.sendStatus.name() == 'QUEUED'}">
+
+            <div class="message-alert-icon" aria-hidden="true">&#8635;</div>
+
+            <div class="message-alert-content">
+                <strong>Message is waiting to be sent</strong>
+                <p>
+                    This message is queued for delivery to
+                    <b th:text="${m.externalTo}">recipient address</b>.
+                </p>
+            </div>
+        </div>
+
+        <!-- Main message card -->
+        <article class="mcard">
+
+            <div class="message-card-top">
+                <div class="message-label">EMAIL MESSAGE</div>
+
+                <span class="message-status"
+                      th:if="${m.starred}">
+                    <span aria-hidden="true">&#9733;</span> Starred
+                </span>
+            </div>
+
+            <h1 class="message-subject"
+                th:text="${m.subject != null and !#strings.isEmpty(m.subject)
+                    ? m.subject : '(No subject)'}">
+                Message subject
+            </h1>
+
+            <!-- Message metadata -->
+            <div class="message-meta-card">
+
+                <div class="message-avatar" aria-hidden="true">
+                    <span th:text="${#strings.isEmpty(m.fromAddress)
+                        ? '?' : #strings.toUpperCase(#strings.substring(m.fromAddress, 0, 1))}">
+                        A
+                    </span>
+                </div>
+
+                <div class="message-meta-content">
+
+                    <div class="message-meta-row">
+                        <span class="message-meta-label">From</span>
+                        <span class="message-meta-value"
+                              th:text="${m.fromAddress}">sender@example.com</span>
+                    </div>
+
+                    <div class="message-meta-row">
+                        <span class="message-meta-label">To</span>
+                        <span class="message-meta-value"
+                              th:text="${m.toAddresses}">recipient@example.com</span>
+                    </div>
+
+                    <div class="message-meta-row"
+                         th:if="${!#strings.isEmpty(m.ccAddresses)}">
+                        <span class="message-meta-label">Cc</span>
+                        <span class="message-meta-value"
+                              th:text="${m.ccAddresses}">cc@example.com</span>
+                    </div>
+
+                    <div class="message-meta-row">
+                        <span class="message-meta-label">Date</span>
+                        <time class="message-meta-value"
+                              th:datetime="${#temporals.format(m.createdAt, 'yyyy-MM-dd''T''HH:mm:ss')}"
+                              th:text="${#temporals.format(m.createdAt, 'dd MMM yyyy, HH:mm')}">
+                            Date and time
+                        </time>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Email body: preserve plain-text rendering -->
+            <div class="mbody" th:text="${m.body}">Message body</div>
+
+            <!-- Attachments -->
+            <section class="matts"
+                     th:if="${!#lists.isEmpty(files)}">
+
+                <div class="attachment-heading">
+                    <div class="attachment-heading-icon" aria-hidden="true">
+                        &#128206;
+                    </div>
+                    <div>
+                        <h2>Attachments</h2>
+                        <p>Files included with this message</p>
+                    </div>
+                </div>
+
+                <div class="attachment-list">
+                    <a th:each="f : ${files}"
+                       class="mfile"
+                       th:href="@{/mail/attachment/{id}(id=${f.id})}">
+
+                        <span class="attachment-file-icon" aria-hidden="true">
+                            &#128196;
+                        </span>
+
+                        <span class="attachment-file-details">
+                            <strong th:text="${f.filename}">document.pdf</strong>
+                            <small th:text="${f.sizeLabel}">1 KB</small>
+                        </span>
+
+                        <span class="attachment-download" aria-hidden="true">
+                            &#8595;
+                        </span>
+                    </a>
+                </div>
+            </section>
+
+        </article>
+
+        <!-- Message actions -->
+        <section class="message-actions" aria-label="Message actions">
+
+            <div class="message-actions-heading">
+                <h2>Actions</h2>
+                <p>Reply, organize, or manage this message.</p>
+            </div>
+
+            <div class="btn-row mbar">
+
+                <a class="btn message-action-primary"
+                   th:if="${m.folder.name() != 'TRASH'}"
+                   th:href="@{/mail/reply/{id}(id=${m.id})}">
+                    <span aria-hidden="true">&#8617;</span> Reply
+                </a>
+
+                <a class="btn"
+                   th:if="${m.folder.name() != 'TRASH'}"
+                   th:href="@{/mail/reply/{id}(id=${m.id},all=true)}">
+                    <span aria-hidden="true">&#8617;</span> Reply all
+                </a>
+
+                <a class="btn"
+                   th:href="@{/mail/forward/{id}(id=${m.id})}">
+                    <span aria-hidden="true">&#10148;</span> Forward
+                </a>
+
+                <form th:action="@{/mail/message/{id}/star(id=${m.id})}"
+                      method="post">
+                    <input type="hidden"
+                           name="back"
+                           th:value="'/mail/message/' + ${m.id}">
+
+                    <button class="btn"
+                            type="submit"
+                            th:text="${m.starred} ? 'Unstar' : 'Star'">
+                        Star
+                    </button>
+                </form>
+
+                <form th:if="${m.folder.name() == 'INBOX'}"
+                      th:action="@{/mail/message/{id}/unread(id=${m.id})}"
+                      method="post">
+                    <button class="btn" type="submit">Mark unread</button>
+                </form>
+
+                <form th:if="${m.folder.name() == 'TRASH'}"
+                      th:action="@{/mail/message/{id}/restore(id=${m.id})}"
+                      method="post">
+                    <button class="btn" type="submit">Restore</button>
+                </form>
+
+                <form th:action="@{/mail/message/{id}/delete(id=${m.id})}"
+                      method="post"
+                      onsubmit="return confirm('Are you sure you want to delete this message?')">
+
+                    <button class="btn danger"
+                            type="submit"
+                            th:text="${m.folder.name() == 'TRASH'}
+                                ? 'Delete forever' : 'Delete'">
+                        Delete
+                    </button>
+                </form>
+
+            </div>
+        </section>
+
+    </section>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

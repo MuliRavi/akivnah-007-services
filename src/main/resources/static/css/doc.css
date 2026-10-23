@@ -1,32 +1,379 @@
-:root{--navy:#14213D;--blue:#2F5FBF;--grey:#5A6472;--line:#C8D3E6}
-*{box-sizing:border-box}
-body{margin:0;background:#e9edf3;font-family:"Nunito Sans",Calibri,Carlito,"Segoe UI",Arial,sans-serif;color:#222;font-size:11pt}
-.toolbar{max-width:210mm;margin:12px auto 0;display:flex;gap:12px;align-items:center}
-.toolbar a,.toolbar button{background:var(--blue);color:#fff;border:0;border-radius:8px;padding:8px 18px;font:inherit;cursor:pointer;text-decoration:none}
-.toolbar a.plain{background:none;color:var(--blue);padding:8px 0}
-.page{position:relative;width:210mm;min-height:297mm;margin:10px auto 20mm;background:#fff;box-shadow:0 2px 12px #0002;overflow:hidden}
-.page::before{content:"";position:absolute;inset:0;background:url("/images/akivnah-watermark.svg") center/62% no-repeat;pointer-events:none}
-table.sheet{position:relative;width:100%;border-collapse:collapse;min-height:297mm}
-.sheet thead{display:table-header-group}.sheet tfoot{display:table-footer-group}
-.sheet td.pad{padding:0 20mm}
-.hdr{display:flex;align-items:center;gap:14px;padding:12mm 0 4mm;border-bottom:2px solid var(--blue)}
-.hdr img{width:17mm;height:17mm}
-.hdr .name{font-family:Sora,"Segoe UI",sans-serif;font-size:26pt;font-weight:700;color:var(--navy);line-height:1}
-.hdr .legal{font-size:9pt;color:var(--grey);margin-top:2mm}
-.hdr .contact{margin-left:auto;text-align:right;font-size:9pt;color:var(--grey);line-height:1.5}
-.ftr{border-top:1px solid var(--line);padding:3mm 0 8mm;text-align:center;font-size:8.5pt;color:var(--grey);line-height:1.6}
-.sheet td.pad.body{padding:8mm 20mm;vertical-align:top;height:100%}
-.body p{margin:0 0 4mm;line-height:1.55}
-.right{text-align:right}
-h1.title{font-size:15pt;color:var(--navy);text-align:center;margin:6mm 0}
-h2.sub{font-size:12pt;color:var(--navy);margin:6mm 0 3mm}
-ol.terms{padding-left:6mm;margin:0 0 4mm}ol.terms li{margin-bottom:2mm}
-table.d{width:100%;border-collapse:collapse;margin-bottom:6mm;font-size:10pt}
-.d td,.d th{border:1px solid var(--line);padding:2mm 3mm;text-align:left}
-.d th{background:var(--blue);color:#fff}.d td.l{background:#eef3fb;font-weight:700}
-.d .n{text-align:right}.d tr.t td{font-weight:700}
-.net{font-size:12pt;color:var(--navy);font-weight:700}
-.sign{margin-top:14mm}.sign .line{border-top:1px solid #888;width:60mm;margin-top:14mm;padding-top:1mm}
-.accept{margin-top:10mm;border:1px dashed var(--line);padding:4mm}
-@page{size:A4;margin:0}
-@media print{body{background:none}.noprint{display:none!important}.page{margin:0;box-shadow:none;width:auto}.page::before{position:fixed}}
+:root {
+	--navy: #14213D;
+	--blue: #2F5FBF;
+	--grey: #5A6472;
+	--line: #C8D3E6
+}
+
+* {
+	box-sizing: border-box
+}
+
+body {
+	margin: 0;
+	background: #e9edf3;
+	font-family: "Nunito Sans", Calibri, Carlito, "Segoe UI", Arial, sans-serif;
+	color: #222;
+	font-size: 11pt
+}
+
+.toolbar {
+	max-width: 210mm;
+	margin: 12px auto 0;
+	display: flex;
+	gap: 12px;
+	align-items: center
+}
+
+.toolbar a,
+.toolbar button {
+	background: var(--blue);
+	color: #fff;
+	border: 0;
+	border-radius: 8px;
+	padding: 8px 18px;
+	font: inherit;
+	cursor: pointer;
+	text-decoration: none
+}
+
+.toolbar a.plain {
+	background: none;
+	color: var(--blue);
+	padding: 8px 0
+}
+
+.page {
+	position: relative;
+	width: 210mm;
+	min-height: 297mm;
+	margin: 10px auto 20mm;
+	background: #fff;
+	box-shadow: 0 2px 12px #0002;
+	overflow: hidden
+}
+
+.page::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: url("/images/akivnah-watermark.svg") center/62% no-repeat;
+	pointer-events: none
+}
+
+table.sheet {
+	position: relative;
+	width: 100%;
+	border-collapse: collapse;
+	min-height: 297mm
+}
+
+.sheet thead {
+	display: table-header-group
+}
+
+.sheet tfoot {
+	display: table-footer-group
+}
+
+.sheet td.pad {
+	padding: 0 20mm
+}
+
+.hdr {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 12mm 0 4mm;
+	border-bottom: 2px solid var(--blue)
+}
+
+.hdr img {
+	width: 17mm;
+	height: 17mm
+}
+
+.hdr .name {
+	font-family: Sora, "Segoe UI", sans-serif;
+	font-size: 26pt;
+	font-weight: 700;
+	color: var(--navy);
+	line-height: 1
+}
+
+.hdr .legal {
+	font-size: 9pt;
+	color: var(--grey);
+	margin-top: 2mm
+}
+
+.hdr .contact {
+	margin-left: auto;
+	text-align: right;
+	font-size: 9pt;
+	color: var(--grey);
+	line-height: 1.5
+}
+
+.ftr {
+	border-top: 1px solid var(--line);
+	padding: 3mm 0 8mm;
+	text-align: center;
+	font-size: 8.5pt;
+	color: var(--grey);
+	line-height: 1.6
+}
+
+.sheet td.pad.body {
+	padding: 8mm 20mm;
+	vertical-align: top;
+	height: 100%
+}
+
+.body p {
+	margin: 0 0 4mm;
+	line-height: 1.55
+}
+
+.right {
+	text-align: right
+}
+
+h1.title {
+	font-size: 15pt;
+	color: var(--navy);
+	text-align: center;
+	margin: 6mm 0
+}
+
+h2.sub {
+	font-size: 12pt;
+	color: var(--navy);
+	margin: 6mm 0 3mm
+}
+
+ol.terms {
+	padding-left: 6mm;
+	margin: 0 0 4mm
+}
+
+ol.terms li {
+	margin-bottom: 2mm
+}
+
+table.d {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 6mm;
+	font-size: 10pt
+}
+
+.d td,
+.d th {
+	border: 1px solid var(--line);
+	padding: 2mm 3mm;
+	text-align: left
+}
+
+.d th {
+	background: var(--blue);
+	color: #fff
+}
+
+.d td.l {
+	background: #eef3fb;
+	font-weight: 700
+}
+
+.d .n {
+	text-align: right
+}
+
+.d tr.t td {
+	font-weight: 700
+}
+
+.net {
+	font-size: 12pt;
+	color: var(--navy);
+	font-weight: 700
+}
+
+.sign {
+	margin-top: 14mm
+}
+
+.sign .line {
+	border-top: 1px solid #888;
+	width: 60mm;
+	margin-top: 14mm;
+	padding-top: 1mm
+}
+
+.accept {
+	margin-top: 10mm;
+	border: 1px dashed var(--line);
+	padding: 4mm
+}
+
+@page {
+	size: A4;
+	margin: 0
+}
+
+@media print {
+	body {
+		background: none
+	}
+
+	.noprint {
+		display: none !important
+	}
+
+	.page {
+		margin: 0;
+		box-shadow: none;
+		width: auto
+	}
+
+	.page::before {
+		position: fixed
+	}
+}
+/* Document company header */
+.hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 22px 0;
+    border-bottom: 2px solid #29245f;
+    font-family: "Nunito Sans", sans-serif;
+}
+
+.hdr-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.hdr-brand img {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+}
+
+.hdr-company .name {
+    color: #29245f;
+    font-family: "Sora", sans-serif;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.hdr-company .legal {
+    margin-top: 5px;
+    color: #626a7a;
+    font-size: 12px;
+}
+
+.hdr .contact {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    color: #555e70;
+    font-size: 11px;
+    line-height: 1.6;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.hdr .contact a {
+    color: #29245f;
+    text-decoration: none;
+}
+
+/* Document footer */
+.ftr {
+    margin-top: 30px;
+    padding: 15px 0 0;
+    border-top: 1px solid #d9dce5;
+    color: #626a7a;
+    font-family: "Nunito Sans", sans-serif;
+    font-size: 10px;
+    line-height: 1.8;
+    text-align: center;
+}
+
+.footer-company {
+    color: #29245f;
+    font-size: 11px;
+}
+
+.footer-registration {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+}
+
+.footer-address {
+    margin-top: 3px;
+}
+
+/* Print toolbar */
+.toolbar.noprint {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    font-family: "Nunito Sans", sans-serif;
+}
+
+.toolbar.noprint button {
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 8px;
+    background: #29245f;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.toolbar.noprint a {
+    color: #29245f;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+@media (max-width: 600px) {
+    .hdr {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .hdr .contact {
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .toolbar.noprint {
+        flex-wrap: wrap;
+    }
+}
+
+@media print {
+    .noprint {
+        display: none !important;
+    }
+
+    .hdr {
+        break-inside: avoid;
+    }
+
+    .ftr {
+        break-inside: avoid;
+    }
+}

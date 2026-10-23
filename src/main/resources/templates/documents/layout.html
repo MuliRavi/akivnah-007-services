@@ -1,22 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:fragment="head(title)">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title th:text="${title}">Document</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/css/doc.css}">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="${title}">Document</title>
+	<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Nunito+Sans:wght@400;600&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" th:href="@{/css/doc.css}">
 </head>
+
 <body>
-<div class="toolbar noprint" th:fragment="toolbar">
-  <button type="button" onclick="window.print()">Print / Save as PDF</button>
-  <a class="plain" href="javascript:history.back()">&larr; Back</a>
-</div>
-<div class="hdr" th:fragment="header">
-  <img th:src="@{/images/akivnah-icon.svg}" alt="">
-  <div><div class="name">Akivnah</div><div class="legal">[Full Registered Company Name]</div></div>
-  <div class="contact">[Street Address, City - PIN]<br>+91 00000 00000<br>hr@akivnah.com<br>www.akivnah.com</div>
-</div>
-<div class="ftr" th:fragment="footer">Akivnah &nbsp;|&nbsp; CIN: [Company Identification Number] &nbsp;|&nbsp; GSTIN: [GST Number]<br>Registered Office: [Address]</div>
+	<div class="toolbar noprint" th:fragment="toolbar">
+		<button type="button" onclick="window.print()">Print / Save as PDF</button>
+		<a class="plain" href="javascript:history.back()">&larr; Back</a>
+	</div>
+	<div class="hdr" th:fragment="header">
+		<img th:src="@{/images/akivnah-icon.svg}" alt="">
+		<div>
+			<div class="name">Akivnah</div>
+			<div class="legal">[Full Registered Company Name]</div>
+		</div>
+		<div class="contact">[Street Address, City - PIN]<br>+91 00000 00000<br>hr@akivnah.com<br>www.akivnah.com</div>
+	</div>
+	<div class="ftr" th:fragment="footer">Akivnah &nbsp;|&nbsp; CIN: [Company Identification Number] &nbsp;|&nbsp;
+		GSTIN: [GST Number]<br>Registered Office: [Address]</div>
 </body>
+
 </html>

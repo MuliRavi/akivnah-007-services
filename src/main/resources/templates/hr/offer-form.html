@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: head('New offer letter')}"></head>
+<head th:replace="~{doc-fragments :: head('New offer letter')}"></head>
 <body>
-<header th:replace="~{fragments :: nav}"></header>
+<header th:replace="~{doc-fragments :: nav}"></header>
 <main>
   <p><a th:href="@{/hr/employees/{id}(id=${employee.id})}">&larr; Back</a></p>
   <h1>Offer letter &ndash; <span th:text="${employee.fullName}">Name</span></h1>
@@ -22,6 +22,6 @@
     </form>
   </div>
 </main>
-<footer th:replace="~{fragments :: footer}"></footer>
+<footer th:replace="~{doc-fragments :: footer}"></footer>
 </body>
 </html>

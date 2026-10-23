@@ -1,1 +1,9 @@
 /target/
+
+# Local H2 database files
+/data/*.mv.db
+/data/*.lock.db
+/data/*.trace.db
+
+# Eclipse workspace preferences
+.settings/org.eclipse.core.resources.prefs

@@ -7,3 +7,18 @@
 
 # Eclipse workspace preferences
 .settings/org.eclipse.core.resources.prefs
+
+# Eclipse workspace settings
+.settings/
+.classpath
+.project
+
+# IntelliJ
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# Environment secrets
+.env
